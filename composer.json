@@ -1,0 +1,36 @@
+{
+    "name": "intprog/feature-flag-bundle",
+    "description": "This bundle contains the feature flag bundle to control features beyond deployments.",
+    "homepage": "http://www.intense-programming.com",
+    "type": "ezplatform-bundle",
+    "license": "MIT",
+    "archive": {
+        "exclude": [
+            "tests",
+            "phpunit*.xml"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Steve Konrad",
+            "email": "skonrad@wingmail.net",
+            "homepage": "http://www.intense-programming.com"
+        },
+        {
+            "name": "IntenseProgramming",
+            "homepage": "http://www.intense-programming.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "symfony/symfony": "^3.4",
+        "ezsystems/ezpublish-kernel": "^7.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "IntProg\\FeatureFlagBundle\\": "bundle/"
+        }
+    }
+}
