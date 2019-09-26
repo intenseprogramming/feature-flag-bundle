@@ -1,0 +1,6 @@
+# development
+/build
+/clover.xml
+/.phpunit.result.cache
+/vendor
+composer.lock
