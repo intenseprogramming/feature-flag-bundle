@@ -1,0 +1,19 @@
+services:
+    IntProg\FeatureFlagBundle\Core\Persistence\Gateway\DoctrineDatabase:
+        public: false
+        arguments:
+            - '@ezpublish.persistence.connection'
+    IntProg\FeatureFlagBundle\Core\Persistence\Gateway\ExceptionConversion:
+        public: false
+        arguments:
+            - '@IntProg\FeatureFlagBundle\Core\Persistence\Gateway\DoctrineDatabase'
+
+    IntProg\FeatureFlagBundle\Core\Persistence\Legacy\Handler:
+        public: false
+        arguments:
+            - '@IntProg\FeatureFlagBundle\Core\Persistence\Gateway\ExceptionConversion'
+    IntProg\FeatureFlagBundle\Core\Persistence\Cache\Handler:
+        public: false
+        arguments:
+            - '@IntProg\FeatureFlagBundle\Core\Persistence\Legacy\Handler'
+            - '@ezpublish.cache_pool'

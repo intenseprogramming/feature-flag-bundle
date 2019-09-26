@@ -1,0 +1,7 @@
+services:
+    IntProg\FeatureFlagBundle\EventListener\ConfigScopeListener:
+        public: false
+        arguments:
+            - '@intprog.feature_flag.repository'
+        tags:
+            - { name: kernel.event_subscriber }

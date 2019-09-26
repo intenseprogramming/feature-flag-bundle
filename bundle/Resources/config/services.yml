@@ -1,0 +1,20 @@
+services:
+    intprog.repository.service.inner_feature_flag:
+        class: IntProg\FeatureFlagBundle\Core\Repository\FeatureFlagService
+        public: true
+        arguments:
+            - '@IntProg\FeatureFlagBundle\Core\Persistence\Cache\Handler'
+            - '@translator'
+            - '%intprog.feature.flag.feature_list%'
+
+    intprog.repository.service.feature_flag:
+        alias: 'intprog.repository.service.inner_feature_flag'
+
+    intprog.feature_flag.repository:
+        class: IntProg\FeatureFlagBundle\Services\FeatureFlagRepository
+        public: true
+        arguments:
+            - '@intprog.repository.service.feature_flag'
+            - '@translator.default'
+            - '%intprog.feature.flag.feature_list%'
+            - '%ezpublish.siteaccess.groups_by_siteaccess%'
