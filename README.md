@@ -1,5 +1,5 @@
 
-[![Packagist](https://img.shields.io/packagist/dt/intprog/enhanced-relationlist-type-bundle.svg?style=popout)](https://packagist.org/packages/intprog/enhanced-relationlist-type-bundle)
+[![Packagist](https://img.shields.io/packagist/dt/intprog/feature-flag-bundle.svg?style=popout)](https://packagist.org/packages/intprog/feature-flag-bundle)
 
 # IntProg Feature Flag Bundle
 
