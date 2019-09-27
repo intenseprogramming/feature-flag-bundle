@@ -1,0 +1,45 @@
+{% extends '@ezdesign/layout.html.twig' %}
+
+{% block content %}
+    <div class="row align-items-stretch ez-main-row ez-dashboard-row">
+        <div class="col-md-12">
+            <div class="ez-table-header mt-3">
+                <div class="ez-table-header__headline">{{ 'tab.content.head'|trans }}</div>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    {% for siteaccess in siteaccessList|keys %}
+                        <th>{{ siteaccess }}</th>
+                    {% endfor %}
+                    {% for group in siteaccessGroupList|keys %}
+                        <th>{{ group }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for identifier,feature in featureDefinitions %}
+                    <tr>
+                        <td>{% if feature.name.context %}{{ feature.name.id|trans({}, feature.name.context) }}{% else %}{{ feature.name.id }}{% endif %}</td>
+                        {% for siteaccess in siteaccessList|keys %}
+                            <td>{{ get_feature(identifier, siteaccess).enabled ? 'enabled' : 'disabled' }}</td>
+                        {% endfor %}
+                        {% for group in siteaccessGroupList|keys %}
+                            <td>{{ get_feature(identifier, group).enabled ? 'enabled' : 'disabled' }}</td>
+                        {% endfor %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="{{ 1 + siteaccessList|length + siteaccessGroupList|length }}"><em>not features defined</em></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('intprog-feature-flag-js', null, 'ezplatform') }}
+{% endblock %}

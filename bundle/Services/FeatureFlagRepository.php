@@ -84,55 +84,60 @@ class FeatureFlagRepository implements SiteAccessAware
     /**
      * Return true if the feature with $identifier is enabled.
      *
-     * @param string $identifier
+     * @param string      $identifier
+     * @param string|null $scope
      *
      * @return bool
      */
-    public function isEnabled(string $identifier): bool
+    public function isEnabled(string $identifier, string $scope = null): bool
     {
-        return $this->get($identifier)->enabled;
+        return $this->get($identifier, $scope)->enabled;
     }
 
     /**
      * Return true if the feature with $identifier is disabled.
      *
-     * @param string $identifier
+     * @param string      $identifier
+     * @param string|null $scope
      *
      * @return bool
      */
-    public function isDisabled(string $identifier): bool
+    public function isDisabled(string $identifier, string $scope = null): bool
     {
-        return !$this->isEnabled($identifier);
+        return !$this->isEnabled($identifier, $scope);
     }
 
     /**
      * Returns a feature by $identifier.
      *
-     * @param string $identifier
+     * @param string      $identifier
+     * @param string|null $scope
      *
      * @return FeatureFlag
      *
      * @internal This method does not notify the cache and should not be used for cache sensitive resources.
      */
-    public function get(string $identifier): FeatureFlag
+    public function get(string $identifier, string $scope = null): FeatureFlag
     {
-        foreach ($this->getWeightedActiveScopes() as $scope) {
-            if (!isset($this->featureFlagsByScope[$scope])) {
-                if ($scope === '_definition_') { // _definition_ is not a valid scope (_temp_ is always defined)
+        foreach ($this->getWeightedActiveScopes($scope) as $weightedActiveScope) {
+            if (!isset($this->featureFlagsByScope[$weightedActiveScope])) {
+                if ($weightedActiveScope === '_definition_') { // _definition_ is not a valid scope (_temp_ is always defined)
                     continue;
                 }
 
-                $this->featureFlagsByScope[$scope] = $this->featureFlagService->list($scope);
+                $this->featureFlagsByScope[$weightedActiveScope] = $this->featureFlagService->list($weightedActiveScope);
             }
 
-            if (isset($this->featureFlagsByScope[$scope][$identifier])) {
-                return $this->featureFlagsByScope[$scope][$identifier];
+            if (isset($this->featureFlagsByScope[$weightedActiveScope][$identifier])) {
+                return $this->featureFlagsByScope[$weightedActiveScope][$identifier];
             }
         }
 
         if (!isset($this->featureFlagsByScope['_definition_'])) {
+            $this->featureFlagsByScope['_definition_'] = [];
+
             foreach ($this->featureDefinitions as $definitionIdentifier => $featureDefinition) {
-                $this->featureFlagsByScope['_definition_'][] = new FeatureFlag([
+                $this->featureFlagsByScope['_definition_'][$definitionIdentifier] = new FeatureFlag([
                     'identifier'  => $definitionIdentifier,
                     'scope'       => '_definition_',
                     'name'        => $this->translate($featureDefinition['name']),
@@ -141,6 +146,10 @@ class FeatureFlagRepository implements SiteAccessAware
                     'enabled'     => $featureDefinition['default'],
                 ]);
             }
+        }
+
+        if (isset($this->featureFlagsByScope['_definition_'][$identifier])) {
+            return $this->featureFlagsByScope['_definition_'][$identifier];
         }
 
         trigger_error(
@@ -212,10 +221,21 @@ class FeatureFlagRepository implements SiteAccessAware
     /**
      * Returns a list of scopes to check for the current siteaccess.
      *
+     * @param string|null $scope
+     *
      * @return array
      */
-    private function getWeightedActiveScopes(): array
+    private function getWeightedActiveScopes(string $scope = null): array
     {
+        if ($scope !== null) {
+            return [
+                'global',
+                $scope,
+                'default',
+                '_definition_',
+            ];
+        }
+
         $scopes = [
             '_temp_',
             'global',

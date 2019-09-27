@@ -1,0 +1,6 @@
+intprog_featureFlag_dashboard:
+    path: /feature-flag/dashboard
+    methods:
+        - GET
+    defaults:
+        _controller: intprog_featureFlagDashboardController:dashboard

@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle;
 
+use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\EzPublishCoreExtension;
+use IntProg\FeatureFlagBundle\DependencyInjection\Security\PolicyProvider\FeatureFlagPolicyProvider;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -23,4 +26,21 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class IntProgFeatureFlagBundle extends Bundle
 {
+    /**
+     * Builds the kernel and adds the compiler passes for collections.
+     *
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $eZExtension = $container->getExtension('ezpublish');
+
+        if ($eZExtension instanceof EzPublishCoreExtension) {
+            $eZExtension->addPolicyProvider(new FeatureFlagPolicyProvider());
+        }
+    }
 }

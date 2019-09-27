@@ -14,9 +14,12 @@ namespace IntProg\FeatureFlagBundle\DependencyInjection;
 
 use Exception;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class IntProgFeatureFlagExtension.
@@ -25,7 +28,7 @@ use Symfony\Component\DependencyInjection\Loader;
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
-class IntProgFeatureFlagExtension extends Extension
+class IntProgFeatureFlagExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * Loads a specific configuration.
@@ -38,7 +41,7 @@ class IntProgFeatureFlagExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter(
             'intprog.feature.flag.allow_cookie_manipulation',
@@ -46,9 +49,25 @@ class IntProgFeatureFlagExtension extends Extension
         );
         $container->setParameter('intprog.feature.flag.feature_list', $config['features'] ?? []);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('controller.yml');
         $loader->load('persistence.yml');
         $loader->load('event_listeners.yml');
         $loader->load('services.yml');
+        $loader->load('templating.yml');
+    }
+
+    /**
+     * Adds system configuration to the config load chain.
+     *
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     */
+    public function prepend(ContainerBuilder $container): void
+    {
+        $config = Yaml::parse(file_get_contents(__DIR__ . '/../Resources/config/ezdesign.yml'));
+        $container->prependExtensionConfig('ezdesign', $config);
+        $container->addResource(new FileResource(__DIR__ . '/../Resources/config/ezdesign.yml'));
     }
 }

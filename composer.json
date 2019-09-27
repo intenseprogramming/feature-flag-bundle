@@ -25,10 +25,11 @@
         "php": "^7.1",
         "ext-dom": "*",
         "ext-json": "*",
-        "symfony/symfony": "^3.4",
-        "ezsystems/ezpublish-kernel": "^7.3",
         "doctrine/dbal": "^2.9",
-        "psr/cache": "~1.0"
+        "ezsystems/ezpublish-kernel": "^7.3",
+        "psr/cache": "~1.0",
+        "symfony/symfony": "^3.4",
+        "twig/twig": "^2.10"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,8 @@
+services:
+    intprog_featureFlagDashboardController:
+        class: IntProg\FeatureFlagBundle\Controller\DashboardController
+        arguments:
+            - '@security.authorization_checker'
+            - '%ezpublish.siteaccess.groups_by_siteaccess%'
+            - '%intprog.feature.flag.feature_list%'
+        parent: ezpublish.controller.base
