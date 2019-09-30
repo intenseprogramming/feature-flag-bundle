@@ -18,19 +18,19 @@ use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class ConfigScopeListener.
+ * Class ConfigurationScopeListener.
  *
  * @package   IntProg\FeatureFlagBundle\EventListener
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
-class ConfigScopeListener implements EventSubscriberInterface
+class ConfigurationScopeListener implements EventSubscriberInterface
 {
     /** @var FeatureFlagRepository $featureFlagRepository */
     protected $featureFlagRepository;
 
     /**
-     * ConfigScopeListener constructor.
+     * ConfigurationScopeListener constructor.
      *
      * @param FeatureFlagRepository $featureFlagRepository
      */
@@ -47,8 +47,8 @@ class ConfigScopeListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            MVCEvents::CONFIG_SCOPE_CHANGE  => ['onConfigScopeChange', 100],
-            MVCEvents::CONFIG_SCOPE_RESTORE => ['onConfigScopeChange', 100],
+            MVCEvents::CONFIG_SCOPE_CHANGE  => ['onConfigurationScopeChange', 100],
+            MVCEvents::CONFIG_SCOPE_RESTORE => ['onConfigurationScopeChange', 100],
         ];
     }
 
@@ -59,7 +59,7 @@ class ConfigScopeListener implements EventSubscriberInterface
      *
      * @return void
      */
-    public function onConfigScopeChange(ScopeChangeEvent $event): void
+    public function onConfigurationScopeChange(ScopeChangeEvent $event): void
     {
         $this->featureFlagRepository->setSiteAccess($event->getSiteAccess());
     }

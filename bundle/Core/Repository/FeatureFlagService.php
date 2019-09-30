@@ -20,6 +20,7 @@ use IntProg\FeatureFlagBundle\Spi\Persistence\CreateStruct;
 use IntProg\FeatureFlagBundle\Spi\Persistence\FeatureFlag as SpiFeature;
 use IntProg\FeatureFlagBundle\Spi\Persistence\Handler;
 use IntProg\FeatureFlagBundle\Spi\Persistence\UpdateStruct;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -37,21 +38,31 @@ class FeatureFlagService implements ApiFeatureFlagService
     /** @var TranslatorInterface $translator */
     protected $translator;
 
+    /** @var AuthorizationCheckerInterface $authorizationChecker */
+    protected $authorizationChecker;
+
     /** @var string $featureDefinitions */
     protected $featureDefinitions;
 
     /**
      * FeatureFlagService constructor.
      *
-     * @param Handler             $handler
-     * @param TranslatorInterface $translator
-     * @param array               $featureDefinitions
+     * @param Handler                       $handler
+     * @param TranslatorInterface           $translator
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param array                         $featureDefinitions
      */
-    public function __construct(Handler $handler, TranslatorInterface $translator, array $featureDefinitions)
+    public function __construct(
+        Handler $handler,
+        TranslatorInterface $translator,
+        AuthorizationCheckerInterface $authorizationChecker,
+        array $featureDefinitions
+    )
     {
-        $this->handler            = $handler;
-        $this->featureDefinitions = $featureDefinitions;
-        $this->translator         = $translator;
+        $this->handler              = $handler;
+        $this->featureDefinitions   = $featureDefinitions;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->translator           = $translator;
     }
 
     /**

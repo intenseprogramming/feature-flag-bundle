@@ -55,6 +55,7 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
         $loader->load('event_listeners.yml');
         $loader->load('services.yml');
         $loader->load('templating.yml');
+        $loader->load('role.yml');
     }
 
     /**
@@ -66,8 +67,16 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
      */
     public function prepend(ContainerBuilder $container): void
     {
-        $config = Yaml::parse(file_get_contents(__DIR__ . '/../Resources/config/ezdesign.yml'));
-        $container->prependExtensionConfig('ezdesign', $config);
-        $container->addResource(new FileResource(__DIR__ . '/../Resources/config/ezdesign.yml'));
+        $configsDir = __DIR__ . '/../Resources/config/';
+        $configs    = [
+            'ezdesign.yml'   => 'ezdesign',
+            'ezplatform.yml' => 'ezpublish',
+        ];
+
+        foreach ($configs as $file => $namespace) {
+            $config = Yaml::parse(file_get_contents($configsDir . $file));
+            $container->prependExtensionConfig($namespace, $config);
+            $container->addResource(new FileResource($configsDir . $file));
+        }
     }
 }

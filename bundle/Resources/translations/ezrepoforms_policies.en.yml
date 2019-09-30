@@ -1,0 +1,7 @@
+policy.limitation.identifier.configurationscope: Configuration Scope
+intprog.feature_flag.general: General
+intprog.feature_flag.siteaccess.list: Siteaccess
+intprog.feature_flag.siteaccess.group.list: Siteaccess Groups
+
+intprog.feature_flag.scope.global: Global
+intprog.feature_flag.scope.default: Default

@@ -1,0 +1,11 @@
+services:
+    intprog.limitation.form_mapper.configuration_scope:
+        parent: ezrepoforms.limitation.form_mapper.multiple_selection
+        class: IntProg\FeatureFlagBundle\Limitation\ConfigurationScopeLimitationMapper
+        lazy: true
+        arguments:
+            - "%ezpublish.siteaccess.list%"
+            - "%ezpublish.siteaccess.groups%"
+        tags:
+            - { name: ez.limitation.formMapper, limitationType: ConfigurationScope }
+            - { name: ez.limitation.valueMapper, limitationType: ConfigurationScope }

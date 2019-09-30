@@ -27,6 +27,7 @@
         "ext-json": "*",
         "doctrine/dbal": "^2.9",
         "ezsystems/ezpublish-kernel": "^7.3",
+        "ezsystems/repository-forms": "^2.3",
         "psr/cache": "~1.0",
         "symfony/symfony": "^3.4",
         "twig/twig": "^2.10"

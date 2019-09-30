@@ -5,6 +5,7 @@ services:
         arguments:
             - '@IntProg\FeatureFlagBundle\Core\Persistence\Cache\Handler'
             - '@translator'
+            - '@security.authorization_checker'
             - '%intprog.feature.flag.feature_list%'
 
     intprog.repository.service.feature_flag:
@@ -20,3 +21,8 @@ services:
             - '%ezpublish.siteaccess.groups_by_siteaccess%'
         calls:
             - ['setSiteAccess', ['@ezpublish.siteaccess']]
+
+    intprog.api.role.limitation_type.configuration_scope:
+        class: IntProg\FeatureFlagBundle\Core\Limitation\ConfigurationScopeLimitationType
+        tags:
+            - {name: ezpublish.limitationType, alias: ConfigurationScope}

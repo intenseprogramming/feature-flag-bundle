@@ -1,5 +1,5 @@
 services:
-    IntProg\FeatureFlagBundle\EventListener\ConfigScopeListener:
+    IntProg\FeatureFlagBundle\EventListener\ConfigurationScopeListener:
         public: false
         arguments:
             - '@intprog.feature_flag.repository'
