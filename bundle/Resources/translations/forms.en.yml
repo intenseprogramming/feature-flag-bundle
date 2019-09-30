@@ -1,1 +1,5 @@
 role.policy.intprog_feature_flag: Feature Flag
+
+role.policy.intprog_feature_flag.all_functions: All functions
+role.policy.intprog_feature_flag.change: Change
+role.policy.intprog_feature_flag.dashboard: Dashboard

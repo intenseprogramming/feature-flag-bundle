@@ -14,6 +14,7 @@ namespace IntProg\FeatureFlagBundle\Controller;
 
 use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use IntProg\FeatureFlagBundle\Core\MVC\Symfony\ConfigurationScope;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,11 +63,13 @@ class DashboardController extends Controller
      */
     public function dashboard(): Response
     {
+        // TODO: check for dashboard access
+
         $siteaccessList      = [];
         $siteaccessGroupList = [];
 
         foreach ($this->groupsBySiteaccess as $siteaccess => $groups) {
-            $limitation = ['valueObject' => new SiteAccess($siteaccess)];
+            $limitation = ['valueObject' => new ConfigurationScope($siteaccess)];
             $attribute  = new Attribute('intprog_feature_flag', 'change', $limitation);
             $canChange  = $this->authorizationChecker->isGranted($attribute);
 
