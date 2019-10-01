@@ -37,6 +37,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->booleanNode('allow_cookie_manipulation')
+                ->info('Allow users to set a cookie to enable features (check docs for varnish support!).')
                 ->defaultValue(false)
             ->end();
 
@@ -48,8 +49,22 @@ class Configuration implements ConfigurationInterface
         $this->addTranslatableString($featuresNode, 'name');
         $this->addTranslatableString($featuresNode, 'description');
 
-        $featuresNode->children()->scalarNode('identifier')->cannotBeEmpty()->isRequired();
-        $featuresNode->children()->booleanNode('default')->defaultFalse();
+        $featuresNode->children()
+            ->scalarNode('identifier')
+                ->info('The identifier used for checking the state of the flag.')
+                ->cannotBeEmpty()
+                ->isRequired()
+            ->end()
+            ->booleanNode('default')
+                ->info('The default state of the feature.')
+                ->defaultFalse()
+            ->end()
+        //    ->arrayNode('tags')
+        //        ->info('Tags can be used to limit access over control of features.')
+        //        ->defaultValue([])
+        //        ->prototype('scalar')
+        //    ->end()
+        ;
 
         return $treeBuilder;
     }
@@ -59,6 +74,7 @@ class Configuration implements ConfigurationInterface
         $arrayNode
             ->children()
                 ->arrayNode($key)
+                    ->info('Can contain a static string or id and context to support multiple languages.')
                     ->children()
                         ->scalarNode('id')
                         ->end()
