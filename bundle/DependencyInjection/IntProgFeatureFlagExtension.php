@@ -47,7 +47,7 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
             'intprog.feature.flag.allow_cookie_manipulation',
             $config['allow_cookie_manipulation'] ?? false
         );
-        $container->setParameter('intprog.feature.flag.feature_list', $config['features'] ?? []);
+        $container->setParameter('intprog.feature.flag.feature_list', array_values($config['features']) ?? []);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('controller.yml');
@@ -78,5 +78,14 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
             $container->prependExtensionConfig($namespace, $config);
             $container->addResource(new FileResource($configsDir . $file));
         }
+
+        $container->prependExtensionConfig(
+            'bazinga_js_translation',
+            [
+                'active_domains' => [
+                    'feature_flag',
+                ]
+            ]
+        );
     }
 }

@@ -39,6 +39,9 @@ class FeatureFlagRepository implements SiteAccessAware
     /** @var array $featureDefinitions */
     protected $featureDefinitions;
 
+    /** @var array $siteaccessList */
+    protected $siteaccessList;
+
     /** @var SiteAccess $siteaccess */
     protected $siteaccess;
 
@@ -51,18 +54,21 @@ class FeatureFlagRepository implements SiteAccessAware
      * @param FeatureFlagService  $featureFlagService
      * @param TranslatorInterface $translator
      * @param array               $featureDefinitions
+     * @param array               $siteaccessList
      * @param array               $groupsBySiteaccess
      */
     public function __construct(
         FeatureFlagService $featureFlagService,
         TranslatorInterface $translator,
         array $featureDefinitions,
+        array $siteaccessList,
         array $groupsBySiteaccess
     )
     {
         $this->featureFlagService = $featureFlagService;
         $this->translator         = $translator;
         $this->featureDefinitions = $featureDefinitions;
+        $this->siteaccessList     = $siteaccessList;
         $this->groupsBySiteaccess = $groupsBySiteaccess;
     }
 
@@ -216,6 +222,33 @@ class FeatureFlagRepository implements SiteAccessAware
      */
     public function rebuildFeature(bool $global = true): void
     {
+    }
+
+    /**
+     * Returns all currently possible scopes.
+     *
+     * @return array
+     */
+    public function getAllScopes(): array
+    {
+        return array_merge(
+            ['global'],
+            $this->siteaccessList,
+            array_reduce(
+                $this->groupsBySiteaccess,
+                static function ($carry, $groupList) {
+                    foreach ($groupList as $group) {
+                        if (!in_array($group, $carry, true)) {
+                            $carry[] = $group;
+                        }
+                    }
+
+                    return $carry;
+                },
+                []
+            ),
+            ['default']
+        );
     }
 
     /**

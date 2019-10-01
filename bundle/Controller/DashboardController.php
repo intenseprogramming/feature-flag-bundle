@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\Controller;
 
-use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
-use eZ\Publish\Core\MVC\Symfony\SiteAccess;
-use IntProg\FeatureFlagBundle\Core\MVC\Symfony\ConfigurationScope;
+use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +30,9 @@ class DashboardController extends Controller
     /** @var AuthorizationCheckerInterface $authorizationChecker */
     protected $authorizationChecker;
 
+    /** @var FeatureFlagRepository $featureFlagRepository */
+    protected $featureFlagRepository;
+
     /** @var array $groupsBySiteaccess */
     protected $groupsBySiteaccess;
 
@@ -42,18 +43,21 @@ class DashboardController extends Controller
      * DashboardController constructor.
      *
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param FeatureFlagRepository         $featureFlagRepository
      * @param array                         $groupsBySiteaccess
      * @param array                         $featureDefinitions
      */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
+        FeatureFlagRepository $featureFlagRepository,
         array $groupsBySiteaccess,
         array $featureDefinitions
     )
     {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->groupsBySiteaccess   = $groupsBySiteaccess;
-        $this->featureDefinitions   = $featureDefinitions;
+        $this->authorizationChecker  = $authorizationChecker;
+        $this->featureFlagRepository = $featureFlagRepository;
+        $this->groupsBySiteaccess    = $groupsBySiteaccess;
+        $this->featureDefinitions    = $featureDefinitions;
     }
 
     /**
@@ -63,33 +67,11 @@ class DashboardController extends Controller
      */
     public function dashboard(): Response
     {
-        // TODO: check for dashboard access
-
-        $siteaccessList      = [];
-        $siteaccessGroupList = [];
-
-        foreach ($this->groupsBySiteaccess as $siteaccess => $groups) {
-            $limitation = ['valueObject' => new ConfigurationScope($siteaccess)];
-            $attribute  = new Attribute('intprog_feature_flag', 'change', $limitation);
-            $canChange  = $this->authorizationChecker->isGranted($attribute);
-
-            $siteaccessList[$siteaccess] = $canChange;
-
-            foreach ($groups as $group) {
-                if (!$canChange) {
-                    $siteaccessGroupList[$group] = false;
-                } elseif ($canChange && !isset($siteaccessGroupList[$group])) {
-                    $siteaccessGroupList[$group] = true;
-                }
-            }
-        }
-
         return $this->render(
             '@ezdesign/feature_flag/dashboard.html.twig',
             [
-                'siteaccessList'      => $siteaccessList,
-                'siteaccessGroupList' => $siteaccessGroupList,
-                'featureDefinitions'  => $this->featureDefinitions,
+                'scopes'             => $this->featureFlagRepository->getAllScopes(),
+                'featureDefinitions' => $this->featureDefinitions,
             ]
         );
     }

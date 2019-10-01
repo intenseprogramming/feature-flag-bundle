@@ -1,1 +1,11 @@
+# admin menu
 menu.button.text: Feature Flags
+
+# dashboard
+table.header.name: Feature Flags
+table.column.head.name: Name
+table.column.head.description: Description
+table.column.head.state: State
+table.column.head.source: Source
+table.column.head.change: Change
+table.column.row.loading: Feature Flags are loading...

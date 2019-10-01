@@ -18,6 +18,7 @@ services:
             - '@intprog.repository.service.feature_flag'
             - '@translator.default'
             - '%intprog.feature.flag.feature_list%'
+            - '%ezpublish.siteaccess.list%'
             - '%ezpublish.siteaccess.groups_by_siteaccess%'
         calls:
             - ['setSiteAccess', ['@ezpublish.siteaccess']]
