@@ -5,3 +5,12 @@ services:
             - '@intprog.feature_flag.repository'
         tags:
             - { name: kernel.event_subscriber }
+
+    IntProg\FeatureFlagBundle\EventListener\AdminFeatureFlagTabListener:
+        public: false
+        calls:
+            - ['setAuthorizationChecker', ['@security.authorization_checker']]
+            - ['setTranslator', ['@translator']]
+            - ['setFactory', ['@knp_menu.factory']]
+        tags:
+            - { name: kernel.event_subscriber }

@@ -27,10 +27,15 @@
         "ext-json": "*",
         "doctrine/dbal": "^2.9",
         "ezsystems/ezpublish-kernel": "^7.3",
+        "ezsystems/ezplatform-admin-ui": "^1.5",
         "ezsystems/repository-forms": "^2.3",
+        "knplabs/knp-menu": "~2.3",
         "psr/cache": "~1.0",
         "symfony/symfony": "^3.4",
         "twig/twig": "^2.10"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
     },
     "autoload": {
         "psr-4": {
