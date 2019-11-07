@@ -142,7 +142,9 @@ class FeatureFlagRepository implements SiteAccessAware
         if (!isset($this->featureFlagsByScope['_definition_'])) {
             $this->featureFlagsByScope['_definition_'] = [];
 
-            foreach ($this->featureDefinitions as $definitionIdentifier => $featureDefinition) {
+            foreach ($this->featureDefinitions as $featureDefinition) {
+                $definitionIdentifier = $featureDefinition['identifier'];
+
                 $this->featureFlagsByScope['_definition_'][$definitionIdentifier] = new FeatureFlag([
                     'identifier'  => $definitionIdentifier,
                     'scope'       => '_definition_',
@@ -260,22 +262,17 @@ class FeatureFlagRepository implements SiteAccessAware
      */
     private function getWeightedActiveScopes(string $scope = null): array
     {
-        if ($scope !== null) {
-            return [
-                'global',
-                $scope,
-                'default',
-                '_definition_',
-            ];
+        if ($scope === null) {
+            $scope = $this->siteaccess->name;
         }
 
         $scopes = [
             '_temp_',
             'global',
-            $this->siteaccess->name,
+            $scope,
         ];
 
-        foreach ($this->groupsBySiteaccess[$this->siteaccess->name] ?? [] as $siteaccessGroup) {
+        foreach ($this->groupsBySiteaccess[$scope] ?? [] as $siteaccessGroup) {
             $scopes[] = $siteaccessGroup;
         }
 
