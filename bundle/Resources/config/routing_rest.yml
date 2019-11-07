@@ -1,0 +1,27 @@
+#
+# Feature Flag Operations
+#
+
+intprog_featureFlag.list:
+    path: /feature-flag/list/{scope}
+    options:
+        expose: true
+    defaults:
+        _controller: 'intprog.feature_flag_operation.controller:list'
+    methods: ['GET']
+
+intprog_featureFlag.change:
+    path: /feature-flag
+    options:
+        expose: true
+    defaults:
+        _controller: 'intprog.feature_flag_operation.controller:change'
+    methods: ['POST']
+
+intprog_featureFlag.reset:
+    path: /feature-flag
+    options:
+        expose: true
+    defaults:
+        _controller: 'intprog.feature_flag_operation.controller:reset'
+    methods: ['DELETE']

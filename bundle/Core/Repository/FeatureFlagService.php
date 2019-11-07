@@ -95,6 +95,8 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @param string $scope
      *
      * @return array
+     *
+     * @throws NotFoundException
      */
     public function list(string $scope): array
     {
@@ -125,15 +127,21 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @return FeatureFlag
      *
      * @throws InvalidArgumentException
+     * @throws NotFoundException
      */
     public function create(CreateStruct $createStruct): FeatureFlag
     {
-        // TODO: add permission check
+        $featureIdentifiers = array_map(
+            static function($feature) {
+                return $feature['identifier'];
+            },
+            $this->featureDefinitions
+        );
 
-        if (!isset($this->featureDefinitions[$createStruct->identifier])) {
+        if (!in_array($createStruct->identifier, $featureIdentifiers, true)) {
             throw new InvalidArgumentException(
                 '$createStruct->identifier',
-                sprintf('expected one of "%s"', implode('", "', array_keys($this->featureDefinitions)))
+                sprintf('expected one of "%s"', implode('", "', $featureIdentifiers))
             );
         }
 
@@ -164,6 +172,8 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @param UpdateStruct $updateStruct
      *
      * @return FeatureFlag
+     *
+     * @throws NotFoundException
      */
     public function update(UpdateStruct $updateStruct): FeatureFlag
     {
@@ -194,10 +204,18 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @param SpiFeature $feature The feature return from SpiHandler.
      *
      * @return FeatureFlag
+     *
+     * @throws NotFoundException
      */
     private function generateFeatureFromSpi(SpiFeature $feature): FeatureFlag
     {
-        $featureDefinition = $this->featureDefinitions[$feature->identifier];
+        $featureDefinition = $this->getFeatureDefinition($feature->identifier);
+
+        if (!$featureDefinition) {
+            throw new NotFoundException('FeatureDefinition', [
+                'identifier' => $feature->identifier,
+            ]);
+        }
 
         return new FeatureFlag([
             'identifier'  => $feature->identifier,
@@ -219,5 +237,23 @@ class FeatureFlagService implements ApiFeatureFlagService
     private function translate(array $part)
     {
         return $part['context'] ? $this->translator->trans($part['id'], [], $part['context']) : $part['id'];
+    }
+
+    /**
+     * Searches the feature and returns its definition. Returns null if the feature is not defined.
+     *
+     * @param string $identifier
+     *
+     * @return array|null
+     */
+    private function getFeatureDefinition(string $identifier): ?array
+    {
+        foreach ($this->featureDefinitions as $featureDefinition) {
+            if ($featureDefinition['identifier'] === $identifier) {
+                return $featureDefinition;
+            }
+        }
+
+        return null;
     }
 }

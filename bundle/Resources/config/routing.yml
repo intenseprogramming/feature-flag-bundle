@@ -4,3 +4,7 @@ intprog_featureFlag_dashboard:
         - GET
     defaults:
         _controller: intprog_featureFlagDashboardController:dashboard
+
+intprog_featureFlag.admin_ui.rest:
+    resource: '@IntProgFeatureFlagBundle/Resources/config/routing_rest.yml'
+    prefix: '%ezpublish_rest.path_prefix%'

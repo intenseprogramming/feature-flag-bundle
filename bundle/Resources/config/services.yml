@@ -27,3 +27,13 @@ services:
         class: IntProg\FeatureFlagBundle\Core\Limitation\ConfigurationScopeLimitationType
         tags:
             - {name: ezpublish.limitationType, alias: ConfigurationScope}
+
+    # controller definitions
+    intprog.feature_flag_operation.controller:
+        class: IntProg\FeatureFlagBundle\Controller\FeatureFlagOperationController
+        arguments:
+            - '@intprog.feature_flag.repository'
+            - '@intprog.repository.service.feature_flag'
+            - '%intprog.feature.flag.feature_list%'
+        tags:
+            - { name: controller.service_arguments }
