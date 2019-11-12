@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\Controller;
 
-use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -25,7 +24,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
-class DashboardController extends Controller
+class DashboardController extends AbstractController
 {
     /** @var AuthorizationCheckerInterface $authorizationChecker */
     protected $authorizationChecker;
@@ -74,15 +73,5 @@ class DashboardController extends Controller
                 'featureDefinitions' => $this->featureDefinitions,
             ]
         );
-    }
-
-    public function setFeatureFlag(): JsonResponse
-    {
-        // TODO: set feature flag by identifier and scope.
-    }
-
-    public function resetFeatureFlag(string $feature): JsonResponse
-    {
-        // TODO: remove entry of feature flag by identifier and scope.
     }
 }

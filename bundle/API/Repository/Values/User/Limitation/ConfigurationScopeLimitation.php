@@ -17,7 +17,7 @@ use eZ\Publish\API\Repository\Values\User\Limitation;
 /**
  * Class ConfigurationScopeLimitation.
  *
- * @package   ${NAMESPACE}
+ * @package   IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */

@@ -10,6 +10,7 @@
             "phpunit*.xml"
         ]
     },
+    "minimum-stability": "beta",
     "authors": [
         {
             "name": "Steve Konrad",
@@ -22,17 +23,12 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.3",
+        "ext-pdo": "*",
         "ext-dom": "*",
         "ext-json": "*",
-        "doctrine/dbal": "^2.9",
-        "ezsystems/ezpublish-kernel": "^7.3",
-        "ezsystems/ezplatform-admin-ui": "^1.5",
-        "ezsystems/repository-forms": "^2.3",
-        "knplabs/knp-menu": "~2.3",
-        "psr/cache": "~1.0",
-        "symfony/symfony": "^3.4",
-        "twig/twig": "^2.10"
+        "ezsystems/ezpublish-kernel": "dev-master",
+        "ezsystems/ezplatform-admin-ui": "dev-master"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"

@@ -20,8 +20,9 @@ use IntProg\FeatureFlagBundle\Spi\Persistence\CreateStruct;
 use IntProg\FeatureFlagBundle\Spi\Persistence\FeatureFlag as SpiFeature;
 use IntProg\FeatureFlagBundle\Spi\Persistence\Handler;
 use IntProg\FeatureFlagBundle\Spi\Persistence\UpdateStruct;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use function in_array;
 
 /**
  * Class FeatureFlagService.
@@ -80,10 +81,7 @@ class FeatureFlagService implements ApiFeatureFlagService
         $spiFeature = $this->handler->load($identifier, $scope);
 
         if (!$spiFeature) {
-            throw new NotFoundException('FeatureFlag', [
-                'identifier' => $identifier,
-                'scope'      => $scope,
-            ]);
+            throw new NotFoundException('FeatureFlag', compact('identifier', 'scope'));
         }
 
         return $this->generateFeatureFromSpi($spiFeature);

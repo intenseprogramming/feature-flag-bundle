@@ -28,13 +28,19 @@ use Symfony\Component\Form\FormInterface;
  */
 class ConfigurationScopeLimitationMapper extends MultipleSelectionBasedMapper implements LimitationValueMapperInterface
 {
-    protected $systemScopes = ['global', 'default'];
-
+    /** @var array $siteaccessList */
     protected $siteaccessList;
 
+    /** @var array $siteaccessGroups */
     protected $siteaccessGroups;
 
-    public function __construct($siteaccessList, $siteaccessGroups)
+    /**
+     * ConfigurationScopeLimitationMapper constructor.
+     *
+     * @param array $siteaccessList
+     * @param array $siteaccessGroups
+     */
+    public function __construct(array $siteaccessList, array $siteaccessGroups)
     {
         $this->siteaccessList = $siteaccessList;
         $this->siteaccessGroups = $siteaccessGroups;
@@ -47,7 +53,7 @@ class ConfigurationScopeLimitationMapper extends MultipleSelectionBasedMapper im
      *
      * @return mixed[]
      */
-    public function mapLimitationValue(Limitation $limitation)
+    public function mapLimitationValue(Limitation $limitation): array
     {
         return $limitation->limitationValues;
     }
@@ -57,9 +63,11 @@ class ConfigurationScopeLimitationMapper extends MultipleSelectionBasedMapper im
      *
      * @return array
      */
-    protected function getSelectionChoices()
+    protected function getSelectionChoices(): array
     {
-        $system = $list = $groups = [];
+        $groups = [];
+        $list   = [];
+        $system = [];
 
         foreach (['global', 'default'] as $item) {
             $system['intprog.feature_flag.scope.' . $item] = $item;
@@ -80,7 +88,7 @@ class ConfigurationScopeLimitationMapper extends MultipleSelectionBasedMapper im
         ];
     }
 
-    public function mapLimitationForm(FormInterface $form, Limitation $data)
+    public function mapLimitationForm(FormInterface $form, Limitation $data): void
     {
         $options = $this->getChoiceFieldOptions() + [
             'multiple' => true,

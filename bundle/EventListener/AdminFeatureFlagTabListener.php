@@ -16,7 +16,7 @@ use EzSystems\EzPlatformAdminUi\Menu\MainMenuBuilder;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdminFeatureFlagTabListener.

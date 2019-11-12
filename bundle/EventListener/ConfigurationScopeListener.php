@@ -14,7 +14,7 @@ namespace IntProg\FeatureFlagBundle\EventListener;
 
 use eZ\Publish\Core\MVC\Symfony\Event\ScopeChangeEvent;
 use eZ\Publish\Core\MVC\Symfony\MVCEvents;
-use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
+use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

@@ -32,8 +32,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('int_prog_feature_flag');
+        $treeBuilder = new TreeBuilder('int_prog_feature_flag');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()
             ->booleanNode('allow_cookie_manipulation')

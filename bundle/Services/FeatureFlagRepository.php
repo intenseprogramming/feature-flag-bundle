@@ -14,9 +14,11 @@ namespace IntProg\FeatureFlagBundle\Services;
 
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess\SiteAccessAware;
+use IntProg\FeatureFlagBundle\API\FeatureFlagRepository as ApiFeatureFlagRepository;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService;
 use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use function in_array;
 
 /**
  * Class FeatureFlagRepository.
@@ -25,7 +27,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
-class FeatureFlagRepository implements SiteAccessAware
+class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
 {
     /** @var FeatureFlagService $featureFlagService */
     protected $featureFlagService;
@@ -135,11 +137,11 @@ class FeatureFlagRepository implements SiteAccessAware
             }
 
             if (isset($this->featureFlagsByScope[$weightedActiveScope][$identifier])) {
-                return $this->featureFlagsByScope[$weightedActiveScope][$identifier];
+                $result = $this->featureFlagsByScope[$weightedActiveScope][$identifier];
             }
         }
 
-        if (!isset($this->featureFlagsByScope['_definition_'])) {
+        if (!isset($result, $this->featureFlagsByScope['_definition_'])) {
             $this->featureFlagsByScope['_definition_'] = [];
 
             foreach ($this->featureDefinitions as $featureDefinition) {
@@ -154,23 +156,28 @@ class FeatureFlagRepository implements SiteAccessAware
                     'enabled'     => $featureDefinition['default'],
                 ]);
             }
+
+
+            if (isset($this->featureFlagsByScope['_definition_'][$identifier])) {
+                $result = $this->featureFlagsByScope['_definition_'][$identifier];
+            }
         }
 
-        if (isset($this->featureFlagsByScope['_definition_'][$identifier])) {
-            return $this->featureFlagsByScope['_definition_'][$identifier];
+        if (!isset($result)) {
+            trigger_error(
+                sprintf('Feature with identifier "%s" is in neither storage, cache or definition!', $identifier),
+                E_USER_WARNING
+            );
+
+            $result = new FeatureFlag([
+                'identifier' => $identifier,
+                'scope'      => '_not_found_',
+                'default'    => false,
+                'enabled'    => false,
+            ]);
         }
 
-        trigger_error(
-            sprintf('Feature with identifier "%s" is in neither storage, cache or definition!', $identifier),
-            E_USER_WARNING
-        );
-
-        return new FeatureFlag([
-            'identifier' => $identifier,
-            'scope'      => '_not_found_',
-            'default'    => false,
-            'enabled'    => false,
-        ]);
+        return $result;
     }
 
     /**
@@ -224,6 +231,7 @@ class FeatureFlagRepository implements SiteAccessAware
      */
     public function rebuildFeature(bool $global = true): void
     {
+        // TODO: add functionality to reset all features.
     }
 
     /**

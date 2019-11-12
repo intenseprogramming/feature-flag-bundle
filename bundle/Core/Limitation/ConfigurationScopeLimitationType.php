@@ -22,11 +22,12 @@ use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\SPI\Limitation\Type as SPILimitationTypeInterface;
 use IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation\ConfigurationScopeLimitation;
 use IntProg\FeatureFlagBundle\Core\MVC\Symfony\ConfigurationScope;
+use function {in_array,is_array,is_int,is_string};
 
 /**
  * Class ConfigurationScopeLimitationType.
  *
- * @package   ${NAMESPACE}
+ * @package   IntProg\FeatureFlagBundle\Core\Limitation
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
@@ -117,15 +118,11 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
             throw new InvalidArgumentException('$object', 'Must be of type: ConfigurationScope');
         }
 
-        if (empty($value->limitationValues)) {
-            return false;
-        }
-
-        if (empty($object->name)) {
-            return false;
-        }
-
-        return in_array($object->name, $value->limitationValues, true);
+        return (
+            !empty($value->limitationValues) &&
+            !empty($value->limitationValues) &&
+            in_array($object->name, $value->limitationValues, true)
+        );
     }
 
     /**

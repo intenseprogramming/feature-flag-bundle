@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\Templating\Twig\Extension;
 
-use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
+use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

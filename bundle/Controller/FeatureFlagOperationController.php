@@ -11,9 +11,9 @@
 namespace IntProg\FeatureFlagBundle\Controller;
 
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
-use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
+use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService;
-use IntProg\FeatureFlagBundle\Services\FeatureFlagRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  */
-class FeatureFlagOperationController extends Controller
+class FeatureFlagOperationController extends AbstractController
 {
     /** @var FeatureFlagRepository $featureFlagRepository */
     protected $featureFlagRepository;
