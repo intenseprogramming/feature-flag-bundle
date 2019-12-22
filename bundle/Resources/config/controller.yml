@@ -7,3 +7,5 @@ services:
             - '%ezpublish.siteaccess.groups_by_siteaccess%'
             - '%intprog.feature.flag.feature_list%'
         parent: ezpublish.controller.base
+        tags:
+            - { name: controller.service_arguments }
