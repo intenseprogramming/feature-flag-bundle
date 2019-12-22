@@ -26,9 +26,7 @@
         "php": "^7.3",
         "ext-pdo": "*",
         "ext-dom": "*",
-        "ext-json": "*",
-        "ezsystems/ezpublish-kernel": "dev-master",
-        "ezsystems/ezplatform-admin-ui": "dev-master"
+        "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
