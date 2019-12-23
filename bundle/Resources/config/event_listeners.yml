@@ -9,7 +9,7 @@ services:
     IntProg\FeatureFlagBundle\EventListener\BuildSchemaListener:
         public: false
         arguments:
-            - '@=service("kernel").locateResource("@IntProgFeatureFlagBundle/Resources/schema/legacy.yaml")'
+            - '@=service("kernel").locateResource("@IntProgFeatureFlagBundle/Resources/schema/doctrine.yaml")'
         tags:
             - { name: kernel.event_subscriber }
 
