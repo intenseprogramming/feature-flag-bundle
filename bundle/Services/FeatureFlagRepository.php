@@ -14,6 +14,7 @@ namespace IntProg\FeatureFlagBundle\Services;
 
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess\SiteAccessAware;
+use EzSystems\PlatformHttpCacheBundle\ResponseTagger\Delegator\DispatcherTagger;
 use IntProg\FeatureFlagBundle\API\FeatureFlagRepository as ApiFeatureFlagRepository;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService;
 use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
@@ -35,6 +36,9 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     /** @var TranslatorInterface $translator */
     protected $translator;
 
+    /** @var DispatcherTagger $tagger */
+    protected $tagger;
+
     /** @var array $groupsBySiteaccess */
     protected $groupsBySiteaccess;
 
@@ -55,6 +59,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      *
      * @param FeatureFlagService  $featureFlagService
      * @param TranslatorInterface $translator
+     * @param DispatcherTagger    $tagger
      * @param array               $featureDefinitions
      * @param array               $siteaccessList
      * @param array               $groupsBySiteaccess
@@ -62,6 +67,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     public function __construct(
         FeatureFlagService $featureFlagService,
         TranslatorInterface $translator,
+        DispatcherTagger $tagger,
         array $featureDefinitions,
         array $siteaccessList,
         array $groupsBySiteaccess
@@ -69,6 +75,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     {
         $this->featureFlagService = $featureFlagService;
         $this->translator         = $translator;
+        $this->tagger             = $tagger;
         $this->featureDefinitions = $featureDefinitions;
         $this->siteaccessList     = $siteaccessList;
         $this->groupsBySiteaccess = $groupsBySiteaccess;
@@ -127,7 +134,9 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      */
     public function get(string $identifier, string $scope = null): FeatureFlag
     {
-        foreach ($this->getWeightedActiveScopes($scope) as $weightedActiveScope) {
+        $weightedScopes = $this->getWeightedActiveScopes($scope);
+
+        foreach ($weightedScopes as $weightedActiveScope) {
             if (!isset($this->featureFlagsByScope[$weightedActiveScope])) {
                 if ($weightedActiveScope === '_definition_') { // _definition_ is not a valid scope (_temp_ is always defined)
                     continue;
@@ -135,13 +144,9 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
 
                 $this->featureFlagsByScope[$weightedActiveScope] = $this->featureFlagService->list($weightedActiveScope);
             }
-
-            if (isset($this->featureFlagsByScope[$weightedActiveScope][$identifier])) {
-                $result = $this->featureFlagsByScope[$weightedActiveScope][$identifier];
-            }
         }
 
-        if (!isset($result, $this->featureFlagsByScope['_definition_'])) {
+        if (!isset($this->featureFlagsByScope['_definition_'])) {
             $this->featureFlagsByScope['_definition_'] = [];
 
             foreach ($this->featureDefinitions as $featureDefinition) {
@@ -156,10 +161,18 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
                     'enabled'     => $featureDefinition['default'],
                 ]);
             }
+        }
 
+        $checkedScopes = [];
+        foreach ($weightedScopes as $weightedActiveScope) {
+            if (!in_array($weightedActiveScope, ['_temp_', '_definition_'])) {
+                $checkedScopes[] = $weightedActiveScope;
+            }
 
-            if (isset($this->featureFlagsByScope['_definition_'][$identifier])) {
-                $result = $this->featureFlagsByScope['_definition_'][$identifier];
+            if (isset($this->featureFlagsByScope[$weightedActiveScope][$identifier])) {
+                $result = $this->featureFlagsByScope[$weightedActiveScope][$identifier];
+
+                break;
             }
         }
 
@@ -176,6 +189,10 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
                 'enabled'    => false,
             ]);
         }
+
+        $result->checkedScopes = $checkedScopes;
+
+        $this->tagger->tag($result);
 
         return $result;
     }
@@ -243,7 +260,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     {
         return array_merge(
             ['global'],
-            $this->siteaccessList,
+            array_unique($this->siteaccessList),
             array_reduce(
                 $this->groupsBySiteaccess,
                 static function ($carry, $groupList) {

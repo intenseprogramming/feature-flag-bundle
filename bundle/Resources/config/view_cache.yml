@@ -1,0 +1,6 @@
+services:
+    intprog.view_cache.response_tagger.feature_flag:
+        class: IntProg\FeatureFlagBundle\ResponseTagger\Value\FeatureFlagTagger
+        parent: ezplatform.view_cache.response_tagger.abstract_value
+        tags:
+            - {name: ezplatform.cache_response_tagger}

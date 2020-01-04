@@ -7,9 +7,16 @@ services:
             - '@translator'
             - '@security.authorization_checker'
             - '%intprog.feature.flag.feature_list%'
+            -
+    intprog.repository.service.event_feature_flag:
+        class: IntProg\FeatureFlagBundle\Core\Event\FeatureFlagService
+        public: true
+        arguments:
+            - '@intprog.repository.service.inner_feature_flag'
+            - '@event_dispatcher'
 
     intprog.repository.service.feature_flag:
-        alias: 'intprog.repository.service.inner_feature_flag'
+        alias: 'intprog.repository.service.event_feature_flag'
 
     intprog.feature_flag.repository:
         class: IntProg\FeatureFlagBundle\Services\FeatureFlagRepository
@@ -17,6 +24,7 @@ services:
         arguments:
             - '@intprog.repository.service.feature_flag'
             - '@translator.default'
+            - '@ezplatform.view_cache.response_tagger.dispatcher'
             - '%intprog.feature.flag.feature_list%'
             - '%ezpublish.siteaccess.list%'
             - '%ezpublish.siteaccess.groups_by_siteaccess%'

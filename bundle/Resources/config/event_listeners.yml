@@ -21,3 +21,10 @@ services:
             - ['setFactory', ['@knp_menu.factory']]
         tags:
             - { name: kernel.event_subscriber }
+
+    IntProg\FeatureFlagBundle\EventListener\FeatureFlagEventsSubscriber:
+        public: false
+        arguments:
+            - '@ezplatform.http_cache.purge_client'
+        tags:
+            - { name: kernel.event_subscriber }

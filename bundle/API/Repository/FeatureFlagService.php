@@ -83,7 +83,7 @@ interface FeatureFlagService
      *
      * @param FeatureFlag $feature
      *
-     * @return mixed
+     * @return void
      */
-    public function delete(FeatureFlag $feature);
+    public function delete(FeatureFlag $feature): void;
 }

@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace IntProg\FeatureFlagBundle\Limitation;
 
 use eZ\Publish\API\Repository\Values\User\Limitation;
+use EzSystems\EzPlatformAdminUi\Limitation\Mapper\MultipleSelectionBasedMapper;
+use EzSystems\EzPlatformAdminUi\Translation\Extractor\LimitationTranslationExtractor;
 use EzSystems\RepositoryForms\Limitation\LimitationValueMapperInterface;
-use EzSystems\RepositoryForms\Limitation\Mapper\MultipleSelectionBasedMapper;
-use EzSystems\RepositoryForms\Translation\LimitationTranslationExtractor;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 

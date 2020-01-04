@@ -1,6 +1,6 @@
 services:
     intprog.limitation.form_mapper.configuration_scope:
-        parent: ezrepoforms.limitation.form_mapper.multiple_selection
+        parent: ezplatform.content_forms.limitation.form_mapper.multiple_selection
         class: IntProg\FeatureFlagBundle\Limitation\ConfigurationScopeLimitationMapper
         lazy: true
         arguments:

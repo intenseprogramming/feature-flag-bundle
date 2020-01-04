@@ -47,4 +47,7 @@ class FeatureFlag extends ValueObject
 
     /** @var bool $enabled */
     protected $enabled;
+
+    /** @var array|string[] */
+    public $checkedScopes;
 }

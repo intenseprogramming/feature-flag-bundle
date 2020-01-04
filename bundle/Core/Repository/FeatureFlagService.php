@@ -187,7 +187,7 @@ class FeatureFlagService implements ApiFeatureFlagService
      *
      * @param FeatureFlag $feature
      *
-     * @return mixed
+     * @return void
      */
     public function delete(FeatureFlag $feature): void
     {

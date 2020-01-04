@@ -56,6 +56,7 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
         $loader->load('services.yml');
         $loader->load('templating.yml');
         $loader->load('role.yml');
+        $loader->load('view_cache.yml');
     }
 
     /**
