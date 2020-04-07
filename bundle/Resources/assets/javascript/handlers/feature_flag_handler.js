@@ -1,6 +1,3 @@
-import {handleRequestResponse} from '../../../../../../../ezsystems/ezplatform-admin-ui-modules/src/modules/common/helpers/request.helper';
-import {showErrorNotification} from '../../../../../../../ezsystems/ezplatform-admin-ui-modules/src/modules/common/services/notification.service';
-
 const ENDPOINT_LOAD_LIST = '/api/ezp/v2/feature-flag/list/';
 const ENDPOINT_FEATURE = '/api/ezp/v2/feature-flag';
 
@@ -26,11 +23,11 @@ class FeatureFlagHandler {
         );
 
         fetch(request)
-            .then(handleRequestResponse)
+            .then(eZ.helpers.request.getJsonFromResponse)
             .then((data) => {
                 callback(data, false, '');
             })
-            .catch(showErrorNotification);
+            .catch(eZ.helpers.notification.showErrorNotification);
     }
 
     updateFeatureFlag(identifier, scope, state, callback) {
@@ -53,10 +50,11 @@ class FeatureFlagHandler {
         );
 
         fetch(request)
+            .then(eZ.helpers.request.getJsonFromResponse)
             .then((data) => {
                 callback(data, false, '');
             })
-            .catch(showErrorNotification);
+            .catch(eZ.helpers.notification.showErrorNotification);
     }
 
     resetFeatureFlag(identifier, scope, callback) {
@@ -82,7 +80,7 @@ class FeatureFlagHandler {
             .then(() => {
                 callback();
             })
-            .catch(showErrorNotification);
+            .catch(eZ.helpers.notification.showErrorNotification);
     }
 }
 

@@ -39,6 +39,8 @@ services:
     # controller definitions
     intprog.feature_flag_operation.controller:
         class: IntProg\FeatureFlagBundle\Controller\FeatureFlagOperationController
+        autowire: true
+        lazy: true
         arguments:
             - '@intprog.feature_flag.repository'
             - '@intprog.repository.service.feature_flag'
