@@ -65,7 +65,7 @@ class FeatureFlagEventsSubscriber implements EventSubscriberInterface
      */
     public function onFeatureFlagStateCreated(CreatedStateEvent $event): void
     {
-        $this->purgeClient->purge(['feature-flag-' . $event->getScope() . '-' . $event->getIdentifier()]);
+        $this->purgeClient->purge(['ipff-' . $event->getScope() . '-' . $event->getIdentifier()]);
     }
 
     /**
@@ -77,7 +77,7 @@ class FeatureFlagEventsSubscriber implements EventSubscriberInterface
      */
     public function onFeatureFlagStateRemoved(RemovedStateEvent $event): void
     {
-        $this->purgeClient->purge(['feature-flag-' . $event->getScope() . '-' . $event->getIdentifier()]);
+        $this->purgeClient->purge(['ipff-' . $event->getScope() . '-' . $event->getIdentifier()]);
     }
 
     /**
@@ -89,6 +89,6 @@ class FeatureFlagEventsSubscriber implements EventSubscriberInterface
      */
     public function onFeatureFlagStateUpdated(UpdatedStateEvent $event): void
     {
-        $this->purgeClient->purge(['feature-flag-' . $event->getScope() . '-' . $event->getIdentifier()]);
+        $this->purgeClient->purge(['ipff-' . $event->getScope() . '-' . $event->getIdentifier()]);
     }
 }

@@ -170,6 +170,6 @@ class Handler implements SpiHandler
             $identifier = '--list';
         }
 
-        return sprintf('intprog-feature-flag-%s-%s', $scope, $identifier);
+        return sprintf('ipff-%s-%s', $scope, $identifier);
     }
 }

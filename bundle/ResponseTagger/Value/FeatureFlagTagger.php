@@ -36,7 +36,7 @@ class FeatureFlagTagger extends AbstractValueTagger
         if ($value instanceof FeatureFlag) {
             $this->responseTagger->addTags(array_map(
                 static function (string $scope) use ($value) {
-                    return 'feature-flag-' . $scope . '-' . $value->identifier;
+                    return 'ipff-' . $scope . '-' . $value->identifier;
                 },
                 $value->checkedScopes
             ));
