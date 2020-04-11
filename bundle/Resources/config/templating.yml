@@ -2,6 +2,7 @@ services:
     IntProg\FeatureFlagBundle\Templating\Twig\Extension\FeatureFlagAccessorExtension:
         arguments:
             - '@intprog.feature_flag.repository'
+            - '@twig'
         lazy: true
         tags:
             - { name: twig.extension }

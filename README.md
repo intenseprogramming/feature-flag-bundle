@@ -42,13 +42,11 @@ To add a feature you can add new `yaml`-file in `config/packages/` with the foll
 ```yaml
 int_prog_feature_flag:
     features:
-        -
-            identifier: foo_feature
+        foo_feature:
             name: Example feature
             description: An example feature.
             default: true
-        -
-            identifier: bar_feature
+        bar_feature:
             name:
                 id: feature.with.translation.name
                 context: feature_translation_context
@@ -91,6 +89,57 @@ Functions to check a feature in `twig` are available.
 {% endif %}
 ```
 
+### exposing to javascript etc.
+
+Features can be exposed to a javascript-friendly context using either json, javascript or data-attributes.
+
+Note: All of those functions export the result unescaped.
+
+#### json
+
+You can expose the features in a simple json format.
+
+```twig
+{{ expose_features_json() }}
+```
+
+This will result in an json-string containing an object with identifiers as keys and one boolean
+attribute "`enabled`".
+
+```json
+{"feature_foo": {"enabled": true}, "feature_bar": {"enabled": false}}
+```
+
+#### data-attributes
+
+Will output data-attributes to use on dom-elements.
+
+```twig
+<body {{ expose_features_data_attributes() }}>
+```
+
+This will result in the following html-snippet:
+
+```html
+<body data-feature-foo="true" data-feature-bar="false">
+```
+
+Note that the `_` will be replaced by `-`. Javascript-side access will be `body.dataset.featureFoo`.
+
+#### javascript
+
+Exposing to javascript will use the json-function to assign the value to a window-attribute.
+
+```twig
+Exposure in "window.ipFeatures":
+{{ expose_features_javascript() }}
+
+Or with adjusted key in the window object (will write the states to "window.features"):
+{{ expose_features_javascript('features') }}
+```
+
+The javascript can be adjusted by overriding `@ezdesign/feature_flag/expose/javascript.html.twig`.
+
 ## Road to release
 
 ### completed
@@ -102,12 +151,12 @@ Functions to check a feature in `twig` are available.
 - Dispatching events from SPI-Interactions
 - Basic administration interface
 - Policy setup (new policy type including a custom access-limitation)
-
-### pending
-
 - Enabling exposure to javascript
     - setting features as exposed/internal
     - handler to expose features in `window`-context, as `json`, as `html-data-tags`
+
+### pending
+
 - Administration interface cleanup
 - Temporary activation of features via Cookie for Testing-Purposes
 

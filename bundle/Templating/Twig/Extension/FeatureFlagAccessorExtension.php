@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace IntProg\FeatureFlagBundle\Templating\Twig\Extension;
 
 use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
+use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -28,14 +29,19 @@ class FeatureFlagAccessorExtension extends AbstractExtension
     /** @var FeatureFlagRepository $featureFlagRepository */
     protected $featureFlagRepository;
 
+    /** @var Environment $environment */
+    protected $environment;
+
     /**
      * FeatureFlagAccessorExtension constructor.
      *
      * @param FeatureFlagRepository $featureFlagRepository
+     * @param Environment           $environment
      */
-    public function __construct(FeatureFlagRepository $featureFlagRepository)
+    public function __construct(FeatureFlagRepository $featureFlagRepository, Environment $environment)
     {
         $this->featureFlagRepository = $featureFlagRepository;
+        $this->environment           = $environment;
     }
 
     /**
@@ -66,7 +72,46 @@ class FeatureFlagAccessorExtension extends AbstractExtension
                     return $this->featureFlagRepository->get($identifier, $scope);
                 },
                 ['needs_environment' => false]
-            )
+            ),
+            new TwigFunction(
+                'expose_features_json',
+                function () {
+                    return json_encode(
+                        $this->featureFlagRepository->getExposedFeatureStates(),
+                        JSON_THROW_ON_ERROR,
+                        2
+                    );
+                },
+                ['needs_environment' => false, 'is_safe' => ['html']]
+            ),
+            new TwigFunction(
+                'expose_features_data_attributes',
+                function () {
+                    $features = [];
+                    foreach ($this->featureFlagRepository->getExposedFeatureStates() as $identifier => $feature) {
+                        $features[] = sprintf(
+                            'data-%s="%s"',
+                            str_replace('_', '-', $identifier),
+                            $feature ? 'true' : 'false'
+                        );
+                    }
+
+                    return implode(' ', $features);
+                },
+                ['needs_environment' => false, 'is_safe' => ['html']]
+            ),
+            new TwigFunction(
+                'expose_features_javascript',
+                function (string $variable = 'ipFeatureFlags') {
+                    return $this->environment->render(
+                        '@ezdesign/feature_flag/expose/javascript.html.twig',
+                        [
+                            'variable' => $variable,
+                        ]
+                    );
+                },
+                ['needs_environment' => false, 'is_safe' => ['html']]
+            ),
         ];
     }
 }

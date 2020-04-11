@@ -204,7 +204,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      *
      * @return void
      */
-    public function enabledFeature(string $identifier): void
+    public function enableFeature(string $identifier): void
     {
         $this->featureFlagsByScope['_temp_'][$identifier] = new FeatureFlag([
             'identifier' => $identifier,
@@ -220,7 +220,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      *
      * @return void
      */
-    public function disabledFeature(string $identifier): void
+    public function disableFeature(string $identifier): void
     {
         $this->featureFlagsByScope['_temp_'][$identifier] = new FeatureFlag([
             'identifier' => $identifier,
@@ -249,6 +249,26 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     public function rebuildFeature(bool $global = true): void
     {
         // TODO: add functionality to reset all features.
+    }
+
+    /**
+     * Returns exposed features.
+     *
+     * @return array
+     */
+    public function getExposedFeatureStates(): array
+    {
+        $features = [];
+
+        foreach ($this->featureDefinitions as $identifier =>  $featureDefinition) {
+            if ($featureDefinition['exposed'] ?? false) {
+                $features[$identifier] = [
+                    'enabled' => $this->isEnabled($identifier),
+                ];
+            }
+        }
+
+        return $features;
     }
 
     /**

@@ -71,7 +71,7 @@ interface FeatureFlagRepository
      *
      * @return void
      */
-    public function enabledFeature(string $identifier): void;
+    public function enableFeature(string $identifier): void;
 
     /**
      * Temporary disables a feature by $identifier. Will reset after calling FeatureFlagService::reset().
@@ -80,7 +80,7 @@ interface FeatureFlagRepository
      *
      * @return void
      */
-    public function disabledFeature(string $identifier): void;
+    public function disableFeature(string $identifier): void;
 
     /**
      * Resets all temporary enabled/disabled features.
@@ -97,6 +97,13 @@ interface FeatureFlagRepository
      * @return void
      */
     public function rebuildFeature(bool $global = true): void;
+
+    /**
+     * Returns exposed features.
+     *
+     * @return array
+     */
+    public function getExposedFeatureStates(): array;
 
     /**
      * Returns all currently possible scopes.

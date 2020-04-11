@@ -44,50 +44,58 @@ class Configuration implements ConfigurationInterface
         /** @var ArrayNodeDefinition $featuresNode */
         $featuresNode = $rootNode->children()
             ->arrayNode('features')
+                ->validate()
+                    ->ifTrue(static function ($array) {
+                        $identifiers = array_keys($array);
+
+                        foreach ($identifiers as $identifier) {
+                            if (!preg_match('/^[a-z0-9_]+$/', $identifier)) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    })
+                    ->thenInvalid('Feature keys may only consist of lowercase letters, numbers and underscores.')
+                ->end()
                 ->prototype('array');
 
         $this->addTranslatableString($featuresNode, 'name');
         $this->addTranslatableString($featuresNode, 'description');
 
-        $featuresNode->children()
-            ->scalarNode('identifier')
-                ->info('The identifier used for checking the state of the flag.')
-                ->cannotBeEmpty()
-                ->isRequired()
-            ->end()
-            ->booleanNode('default')
-                ->info('The default state of the feature.')
-                ->defaultFalse()
-            ->end()
-        //    ->arrayNode('tags')
-        //        ->info('Tags can be used to limit access over control of features.')
-        //        ->defaultValue([])
-        //        ->prototype('scalar')
-        //    ->end()
-        ;
+        $children = $featuresNode->children();
+
+        $children->booleanNode('exposed')
+            ->info('Sets the feature to be exposed to the frontend.')
+            ->defaultFalse();
+        $children->booleanNode('default')
+            ->info('The default state of the feature.')
+            ->defaultFalse();
 
         return $treeBuilder;
     }
 
     private function addTranslatableString(ArrayNodeDefinition $arrayNode, string $key): void
     {
-        $arrayNode
+        $subNodeDefinition = $arrayNode
             ->children()
-                ->arrayNode($key)
-                    ->info('Can contain a static string or id and context to support multiple languages.')
-                    ->children()
-                        ->scalarNode('id')
-                        ->end()
-                        ->scalarNode('context')
-                        ->end()
-                    ->end()
-                    ->beforeNormalization()
-                        ->ifString()
-                            ->then(static function (string $string) {
-                                return [
-                                    'id' => $string,
-                                    'context' => null,
-                                ];
-                            });
+            ->arrayNode($key);
+
+        $nodeBuilder = $subNodeDefinition
+            ->info('Can contain a static string or id and context to support multiple languages.')
+            ->children();
+
+        $nodeBuilder->scalarNode('id');
+        $nodeBuilder->scalarNode('context');
+
+        $subNodeDefinition
+            ->beforeNormalization()
+                ->ifString()
+                    ->then(static function (string $string) {
+                        return [
+                            'id' => $string,
+                            'context' => null,
+                        ];
+                    });
     }
 }
