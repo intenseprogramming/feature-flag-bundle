@@ -50,9 +50,8 @@ class FeatureFlagHandler {
         );
 
         fetch(request)
-            .then(eZ.helpers.request.getJsonFromResponse)
-            .then((data) => {
-                callback(data, false, '');
+            .then(() => {
+                callback();
             })
             .catch(eZ.helpers.notification.showErrorNotification);
     }
