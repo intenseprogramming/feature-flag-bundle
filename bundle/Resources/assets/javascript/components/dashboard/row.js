@@ -22,11 +22,11 @@ export default class Row extends React.Component {
 
         return (
             <tr>
-                <td>{feature.name}</td>
-                <td>{feature.description}</td>
-                <td>{window.Translator.trans(feature.fromEnabled ? 'feature.enabled' : 'feature.disabled', {}, 'feature_flag')}</td>
-                <td>{window.Translator.trans(`feature.scope.${feature.fromScope}`, {}, 'feature_flag')}</td>
-                <td>
+                <td className="ez-table__cell">{feature.name}</td>
+                <td className="ez-table__cell">{feature.description}</td>
+                <td className="ez-table__cell">{window.Translator.trans(feature.fromEnabled ? 'feature.enabled' : 'feature.disabled', {}, 'feature_flag')}</td>
+                <td className="ez-table__cell">{window.Translator.trans(`feature.scope.${feature.fromScope}`, {}, 'feature_flag')}</td>
+                <td className="ez-table__cell">
                     <select className="form-control" disabled={this.props.loading} onChange={this.onStateChange.bind(this)}>
                         <option value="unset" selected={feature.enabled === null}>
                             {window.Translator.trans('feature.inherited', {}, 'feature_flag')}

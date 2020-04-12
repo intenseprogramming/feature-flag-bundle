@@ -124,7 +124,7 @@ export default class Table extends React.Component {
                         </select>
                     </div>
                 </div>
-                <table className="table">
+                <table className="table feature-flag-table">
                     <thead>
                         <tr>
                             <th>{window.Translator.trans('table.column.head.name', {}, 'feature_flag')}</th>
