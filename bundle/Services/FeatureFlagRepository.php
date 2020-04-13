@@ -240,18 +240,6 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     }
 
     /**
-     * Rebuilds known features.
-     *
-     * @param bool $global
-     *
-     * @return void
-     */
-    public function rebuildFeature(bool $global = true): void
-    {
-        // TODO: add functionality to reset all features.
-    }
-
-    /**
      * Returns exposed features.
      *
      * @return array

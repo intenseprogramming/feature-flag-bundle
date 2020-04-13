@@ -90,15 +90,6 @@ interface FeatureFlagRepository
     public function reset(): void;
 
     /**
-     * Rebuilds known features.
-     *
-     * @param bool $global
-     *
-     * @return void
-     */
-    public function rebuildFeature(bool $global = true): void;
-
-    /**
      * Returns exposed features.
      *
      * @return array
