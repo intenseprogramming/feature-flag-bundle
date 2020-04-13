@@ -1,5 +1,7 @@
 
+[![Build Status](https://travis-ci.org/intenseprogramming/feature-flag-bundle.svg?branch=master)](https://travis-ci.org/intenseprogramming/feature-flag-bundle)
 [![Packagist](https://img.shields.io/packagist/dt/intprog/feature-flag-bundle.svg?style=popout)](https://packagist.org/packages/intprog/feature-flag-bundle)
+[![codecov](https://codecov.io/gh/intenseprogramming/feature-flag-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/intenseprogramming/feature-flag-bundle)
 
 # IntProg Feature Flag Bundle
 
