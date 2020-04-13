@@ -28,6 +28,7 @@ services:
             - '%intprog.feature.flag.feature_list%'
             - '%ezpublish.siteaccess.list%'
             - '%ezpublish.siteaccess.groups_by_siteaccess%'
+            - '%kernel.debug%'
         calls:
             - ['setSiteAccess', ['@ezpublish.siteaccess']]
 

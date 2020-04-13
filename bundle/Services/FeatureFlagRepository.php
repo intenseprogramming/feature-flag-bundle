@@ -54,6 +54,9 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     /** @var array $featureFlagsByScope */
     protected $featureFlagsByScope = ['_temp_' => []];
 
+    /** @var bool $debugEnabled */
+    protected $debugEnabled;
+
     /**
      * FeatureFlagRepository constructor.
      *
@@ -63,6 +66,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      * @param array               $featureDefinitions
      * @param array               $siteaccessList
      * @param array               $groupsBySiteaccess
+     * @param bool                $debugEnabled
      */
     public function __construct(
         FeatureFlagService $featureFlagService,
@@ -70,7 +74,8 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
         DispatcherTagger $tagger,
         array $featureDefinitions,
         array $siteaccessList,
-        array $groupsBySiteaccess
+        array $groupsBySiteaccess,
+        bool $debugEnabled
     )
     {
         $this->featureFlagService = $featureFlagService;
@@ -79,6 +84,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
         $this->featureDefinitions = $featureDefinitions;
         $this->siteaccessList     = $siteaccessList;
         $this->groupsBySiteaccess = $groupsBySiteaccess;
+        $this->debugEnabled       = $debugEnabled;
     }
 
     /**
@@ -177,10 +183,12 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
         }
 
         if (!isset($result)) {
-            trigger_error(
-                sprintf('Feature with identifier "%s" is in neither storage, cache or definition!', $identifier),
-                E_USER_WARNING
-            );
+            if ($this->debugEnabled) {
+                trigger_error(
+                    sprintf('Feature with identifier "%s" is in neither storage, cache or definition!', $identifier),
+                    E_USER_WARNING
+                );
+            }
 
             $result = new FeatureFlag([
                 'identifier' => $identifier,
