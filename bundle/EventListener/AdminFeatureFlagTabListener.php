@@ -98,16 +98,18 @@ class AdminFeatureFlagTabListener implements EventSubscriberInterface
         if ($this->authorizationChecker->isGranted(new Attribute('intprog_feature_flag', 'change'))) {
             $adminMenu = $event->getMenu()->getChild(MainMenuBuilder::ITEM_ADMIN);
 
-            $adminMenu->addChild(
-                $this->factory->createItem(
-                    self::ITEM__MIGRATION,
-                    [
-                        'label'           => $this->translator->trans('menu.button.text', [], 'feature_flag'),
-                        'route'           => 'intprog_featureFlag_dashboard',
-                        'routeParameters' => [],
-                    ]
-                )
-            );
+            if ($adminMenu) {
+                $adminMenu->addChild(
+                    $this->factory->createItem(
+                        self::ITEM__MIGRATION,
+                        [
+                            'label'           => $this->translator->trans('menu.button.text', [], 'feature_flag'),
+                            'route'           => 'intprog_featureFlag_dashboard',
+                            'routeParameters' => [],
+                        ]
+                    )
+                );
+            }
         }
     }
 }

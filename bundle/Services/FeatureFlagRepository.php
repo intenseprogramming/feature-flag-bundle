@@ -153,20 +153,19 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
         }
 
         if (!isset($this->featureFlagsByScope['_definition_'])) {
-            $this->featureFlagsByScope['_definition_'] = [];
-
-            foreach ($this->featureDefinitions as $featureDefinition) {
-                $definitionIdentifier = $featureDefinition['identifier'];
-
-                $this->featureFlagsByScope['_definition_'][$definitionIdentifier] = new FeatureFlag([
-                    'identifier'  => $definitionIdentifier,
-                    'scope'       => '_definition_',
-                    'name'        => $this->translate($featureDefinition['name']),
-                    'description' => $this->translate($featureDefinition['description']),
-                    'default'     => $featureDefinition['default'],
-                    'enabled'     => $featureDefinition['default'],
-                ]);
-            }
+            $this->featureFlagsByScope['_definition_'] = array_map(
+                function ($featureDefinition) {
+                    return new FeatureFlag([
+                        'identifier'  => $featureDefinition['identifier'],
+                        'scope'       => '_definition_',
+                        'name'        => $this->translate($featureDefinition['name']),
+                        'description' => $this->translate($featureDefinition['description']),
+                        'default'     => $featureDefinition['default'],
+                        'enabled'     => $featureDefinition['default'],
+                    ]);
+                },
+                $this->featureDefinitions
+            );
         }
 
         $checkedScopes = [];
@@ -256,7 +255,7 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
     {
         $features = [];
 
-        foreach ($this->featureDefinitions as $identifier =>  $featureDefinition) {
+        foreach ($this->featureDefinitions as $identifier => $featureDefinition) {
             if ($featureDefinition['exposed'] ?? false) {
                 $features[$identifier] = [
                     'enabled' => $this->isEnabled($identifier),
@@ -332,6 +331,10 @@ class FeatureFlagRepository implements ApiFeatureFlagRepository, SiteAccessAware
      */
     private function translate(array $part)
     {
-        return $part['context'] ? $this->translator->trans($part['id'], [], $part['context']) : $part['id'];
+        if ($part['context']) {
+            return $this->translator->trans($part['id'], [], $part['context']);
+        }
+
+        return $part['id'];
     }
 }
