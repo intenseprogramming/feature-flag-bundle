@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\Core\Repository;
 
+use eZ\Publish\API\Repository\Exceptions\BadStateException;
+use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+use eZ\Publish\Core\Base\Exceptions\UnauthorizedException;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService as ApiFeatureFlagService;
 use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
 use IntProg\FeatureFlagBundle\Spi\Persistence\CreateStruct;
@@ -21,8 +24,6 @@ use IntProg\FeatureFlagBundle\Spi\Persistence\FeatureFlag as SpiFeature;
 use IntProg\FeatureFlagBundle\Spi\Persistence\Handler;
 use IntProg\FeatureFlagBundle\Spi\Persistence\UpdateStruct;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use function in_array;
 
 /**
  * Class FeatureFlagService.
@@ -39,8 +40,8 @@ class FeatureFlagService implements ApiFeatureFlagService
     /** @var TranslatorInterface $translator */
     protected $translator;
 
-    /** @var AuthorizationCheckerInterface $authorizationChecker */
-    protected $authorizationChecker;
+    /** @var PermissionResolver $permissionResolver */
+    protected $permissionResolver;
 
     /** @var string $featureDefinitions */
     protected $featureDefinitions;
@@ -48,22 +49,22 @@ class FeatureFlagService implements ApiFeatureFlagService
     /**
      * FeatureFlagService constructor.
      *
-     * @param Handler                       $handler
-     * @param TranslatorInterface           $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param array                         $featureDefinitions
+     * @param Handler             $handler
+     * @param TranslatorInterface $translator
+     * @param PermissionResolver  $permissionResolver
+     * @param array               $featureDefinitions
      */
     public function __construct(
         Handler $handler,
         TranslatorInterface $translator,
-        AuthorizationCheckerInterface $authorizationChecker,
+        PermissionResolver $permissionResolver,
         array $featureDefinitions
     )
     {
-        $this->handler              = $handler;
-        $this->featureDefinitions   = $featureDefinitions;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->translator           = $translator;
+        $this->handler            = $handler;
+        $this->featureDefinitions = $featureDefinitions;
+        $this->permissionResolver = $permissionResolver;
+        $this->translator         = $translator;
     }
 
     /**
@@ -93,15 +94,17 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @param string $scope
      *
      * @return array
-     *
-     * @throws NotFoundException
      */
     public function list(string $scope): array
     {
         $features = [];
 
         foreach ($this->handler->list($scope) as $spiFeature) {
-            $features[$spiFeature->identifier] = $this->generateFeatureFromSpi($spiFeature);
+            try {
+                $features[$spiFeature->identifier] = $this->generateFeatureFromSpi($spiFeature);
+            } catch (NotFoundException $exception) {
+                continue;
+            }
         }
 
         return $features;
@@ -171,11 +174,20 @@ class FeatureFlagService implements ApiFeatureFlagService
      *
      * @return FeatureFlag
      *
+     * @throws BadStateException
      * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      */
     public function update(UpdateStruct $updateStruct): FeatureFlag
     {
-        // TODO: add permission check
+        $feature = $updateStruct->getFeature();
+
+        if (!$this->permissionResolver->canUser('intprog_feature_flag', 'change', $feature)) {
+            throw new UnauthorizedException(
+                'intprog_feature_flag', 'change', ['feature' => $feature->identifier, 'scope' => $feature->scope]
+            );
+        }
 
         $spiFeature = $this->handler->update($updateStruct);
 
@@ -188,10 +200,18 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @param FeatureFlag $feature
      *
      * @return void
+     *
+     * @throws UnauthorizedException
+     * @throws BadStateException
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      */
     public function delete(FeatureFlag $feature): void
     {
-        // TODO: add permission check
+        if (!$this->permissionResolver->canUser('intprog_feature_flag', 'change', $feature)) {
+            throw new UnauthorizedException(
+                'intprog_feature_flag', 'change', ['feature' => $feature->identifier, 'scope' => $feature->scope]
+            );
+        }
 
         $this->handler->delete($feature);
     }
@@ -234,7 +254,11 @@ class FeatureFlagService implements ApiFeatureFlagService
      */
     private function translate(array $part)
     {
-        return $part['context'] ? $this->translator->trans($part['id'], [], $part['context']) : $part['id'];
+        if ($part['context']) {
+            return $this->translator->trans($part['id'], [], $part['context']);
+        }
+
+        return $part['id'];
     }
 
     /**
@@ -246,12 +270,6 @@ class FeatureFlagService implements ApiFeatureFlagService
      */
     private function getFeatureDefinition(string $identifier): ?array
     {
-        foreach ($this->featureDefinitions as $featureDefinition) {
-            if ($featureDefinition['identifier'] === $identifier) {
-                return $featureDefinition;
-            }
-        }
-
-        return null;
+        return $this->featureDefinitions[$identifier] ?? null;
     }
 }

@@ -5,7 +5,7 @@ services:
         arguments:
             - '@IntProg\FeatureFlagBundle\Core\Persistence\Cache\Handler'
             - '@translator'
-            - '@security.authorization_checker'
+            - '@eZ\Publish\Core\Repository\Permission\PermissionResolver'
             - '%intprog.feature.flag.feature_list%'
             -
     intprog.repository.service.event_feature_flag:
@@ -43,6 +43,7 @@ services:
         autowire: true
         lazy: true
         arguments:
+            - '@security.authorization_checker'
             - '@intprog.feature_flag.repository'
             - '@intprog.repository.service.feature_flag'
             - '%intprog.feature.flag.feature_list%'

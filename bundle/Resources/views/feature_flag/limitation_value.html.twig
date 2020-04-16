@@ -1,9 +1,4 @@
 
 {% block ez_limitation_configurationscope_value %}
-{% spaceless %}
-    {% for scope in values %}
-        <span>{{ scope }}</span>
-        {% if not loop.last %}<span>, </span>{% endif %}
-    {% endfor %}
-{% endspaceless %}
+{{ values|join(', ') }}
 {% endblock ez_limitation_configurationscope_value %}

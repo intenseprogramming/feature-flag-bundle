@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\Controller;
 
+use eZ\Publish\Core\Base\Exceptions\UnauthorizedException;
+use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
 use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,9 +65,15 @@ class DashboardController extends AbstractController
      * Renders the dashboard controlling feature flags.
      *
      * @return Response
+     *
+     * @throws UnauthorizedException
      */
     public function dashboard(): Response
     {
+        if (!$this->authorizationChecker->isGranted(new Attribute('intprog_feature_flag', 'dashboard'))) {
+            throw new UnauthorizedException('intprog_feature_flag', 'dashboard');
+        }
+
         return $this->render(
             '@ezdesign/feature_flag/dashboard.html.twig',
             [

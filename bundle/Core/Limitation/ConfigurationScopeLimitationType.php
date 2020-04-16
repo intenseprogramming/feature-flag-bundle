@@ -22,10 +22,7 @@ use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\SPI\Limitation\Type as SPILimitationTypeInterface;
 use IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation\ConfigurationScopeLimitation;
 use IntProg\FeatureFlagBundle\Core\MVC\Symfony\ConfigurationScope;
-use function in_array;
-use function is_array;
-use function is_int;
-use function is_string;
+use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
 
 /**
  * Class ConfigurationScopeLimitationType.
@@ -48,7 +45,7 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
     public function acceptValue(APILimitationValue $limitationValue): void
     {
         if (!$limitationValue instanceof ConfigurationScopeLimitation) {
-            throw new InvalidArgumentType('$limitationValue', 'APISiteAccessLimitation', $limitationValue);
+            throw new InvalidArgumentType('$limitationValue', 'ConfigurationScopeLimitation', $limitationValue);
         }
 
         if (!is_array($limitationValue->limitationValues)) {
@@ -117,7 +114,9 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
             throw new InvalidArgumentException('$value', 'Must be of type: ConfigurationScopeLimitation');
         }
 
-        if (!$object instanceof ConfigurationScope) {
+        if ($object instanceof FeatureFlag) {
+            $object = new ConfigurationScope($object->scope);
+        } elseif (!$object instanceof ConfigurationScope) {
             throw new InvalidArgumentException('$object', 'Must be of type: ConfigurationScope');
         }
 

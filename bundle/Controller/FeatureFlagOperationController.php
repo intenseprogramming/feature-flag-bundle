@@ -11,12 +11,15 @@
 namespace IntProg\FeatureFlagBundle\Controller;
 
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+use eZ\Publish\Core\Base\Exceptions\UnauthorizedException;
+use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
 use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class FeatureFlagOperationController.
@@ -27,6 +30,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class FeatureFlagOperationController extends AbstractController
 {
+    /** @var AuthorizationCheckerInterface $authorizationChecker */
+    protected $authorizationChecker;
+
     /** @var FeatureFlagRepository $featureFlagRepository */
     protected $featureFlagRepository;
 
@@ -39,16 +45,19 @@ class FeatureFlagOperationController extends AbstractController
     /**
      * FeatureFlagOperationController constructor.
      *
-     * @param FeatureFlagRepository $featureFlagRepository
-     * @param FeatureFlagService    $featureFlagService
-     * @param array                 $featureDefinitions
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param FeatureFlagRepository         $featureFlagRepository
+     * @param FeatureFlagService            $featureFlagService
+     * @param array                         $featureDefinitions
      */
     public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
         FeatureFlagRepository $featureFlagRepository,
         FeatureFlagService $featureFlagService,
         array $featureDefinitions
     )
     {
+        $this->authorizationChecker  = $authorizationChecker;
         $this->featureFlagRepository = $featureFlagRepository;
         $this->featureFlagService    = $featureFlagService;
         $this->featureDefinitions    = $featureDefinitions;
@@ -63,6 +72,10 @@ class FeatureFlagOperationController extends AbstractController
      */
     public function list(string $scope): JsonResponse
     {
+        if (!$this->authorizationChecker->isGranted(new Attribute('intprog_feature_flag', 'dashboard'))) {
+            throw new UnauthorizedException('intprog_feature_flag', 'dashboard');
+        }
+
         $featureList = [];
 
         foreach ($this->featureDefinitions as $featureDefinition) {
