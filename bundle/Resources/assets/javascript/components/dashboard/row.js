@@ -8,11 +8,13 @@ export default class Row extends React.Component {
 
         switch (event.target.value) {
         case 'unset':
-            FeatureFlagHandler.resetFeatureFlag(feature.identifier, feature.scope, this.props.onFeatureChange);
+            this.props.onFeatureChangeStart();
+            FeatureFlagHandler.resetFeatureFlag(feature.identifier, feature.scope, this.props.onFeatureChangeFinished);
             break;
         case 'enabled':
         case 'disabled':
-            FeatureFlagHandler.updateFeatureFlag(feature.identifier, feature.scope, event.target.value === 'enabled', this.props.onFeatureChange);
+            this.props.onFeatureChangeStart();
+            FeatureFlagHandler.updateFeatureFlag(feature.identifier, feature.scope, event.target.value === 'enabled', this.props.onFeatureChangeFinished);
             break;
         }
     }
@@ -55,6 +57,7 @@ Row.propTypes = {
         name: PropTypes.string.isRequired,
         default: PropTypes.bool.isRequired,
     }).isRequired,
-    onFeatureChange: PropTypes.func.isRequired,
+    onFeatureChangeStart: PropTypes.func.isRequired,
+    onFeatureChangeFinished: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
 };

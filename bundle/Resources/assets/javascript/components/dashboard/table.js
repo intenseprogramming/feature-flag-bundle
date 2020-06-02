@@ -19,7 +19,20 @@ export default class Table extends React.Component {
         }
     }
 
-    onFeatureChange() {
+    onFeatureChangeStart() {
+        this.setState(prevState => ({
+            loading: {
+                loaded: prevState.loading.loaded,
+                reloading: true,
+                error: prevState.loading.error,
+                errorMessage: prevState.loading.error,
+            },
+            scope: prevState.scope,
+            features: prevState.features,
+        }));
+    }
+
+    onFeatureChangeFinished() {
         this.setState(prevState => ({
             loading: {
                 loaded: prevState.loading.loaded,
@@ -99,7 +112,8 @@ export default class Table extends React.Component {
                     key={`${key}-${this.state.scope}`}
                     featureDefinition={item}
                     loading={this.state.loading.reloading}
-                    onFeatureChange={this.onFeatureChange.bind(this)}
+                    onFeatureChangeStart={this.onFeatureChangeStart.bind(this)}
+                    onFeatureChangeFinished={this.onFeatureChangeFinished.bind(this)}
                 />
             );
         });
