@@ -97,6 +97,7 @@ class ConfigurationScopeLimitationMapper extends MultipleSelectionBasedMapper im
         ];
         $choices = $this->getSelectionChoices();
         $options += ['choices' => $choices];
+        $options += ['translation_domain' => 'ezrepoforms_policies'];
         $form->add('limitationValues', ChoiceType::class, $options);
     }
 }

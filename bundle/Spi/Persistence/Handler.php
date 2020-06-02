@@ -54,11 +54,11 @@ interface Handler
     /**
      * Removes the persisted flag for the feature.
      *
-     * @param FeatureValue $feature
+     * @param FeatureFlag $feature
      *
      * @return void
      */
-    public function delete(FeatureValue $feature): void;
+    public function delete(FeatureFlag $feature): void;
 
     /**
      * Lists stored features.

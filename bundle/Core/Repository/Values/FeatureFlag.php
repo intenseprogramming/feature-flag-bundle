@@ -21,15 +21,19 @@ use eZ\Publish\API\Repository\Values\ValueObject;
  * @author    Konrad, Steve <skonrad@wingmail.net>
  * @copyright 2019 Intense Programming
  *
- * @property-read string      $identifier
- * @property-read string      $scope
- * @property-read string|null $name
- * @property-read string|null $description
- * @property-read bool        $default
- * @property-read bool        $enabled
+ * @property-read string         $identifier
+ * @property-read string         $scope
+ * @property-read string|null    $name
+ * @property-read string|null    $description
+ * @property-read array|string[] $groups
+ * @property-read bool           $default
+ * @property-read bool           $enabled
  */
 class FeatureFlag extends ValueObject
 {
+    /** @var array|string[] */
+    public $checkedScopes;
+
     /** @var string $identifier */
     protected $identifier;
 
@@ -42,12 +46,12 @@ class FeatureFlag extends ValueObject
     /** @var string|null $description */
     protected $description;
 
+    /** @var array|string[] $groups */
+    protected $groups;
+
     /** @var bool $default */
     protected $default;
 
     /** @var bool $enabled */
     protected $enabled;
-
-    /** @var array|string[] */
-    public $checkedScopes;
 }

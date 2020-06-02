@@ -32,10 +32,18 @@ services:
         calls:
             - ['setSiteAccess', ['@ezpublish.siteaccess']]
 
+    # policy limitation services.
     intprog.api.role.limitation_type.configuration_scope:
         class: IntProg\FeatureFlagBundle\Core\Limitation\ConfigurationScopeLimitationType
         tags:
             - {name: ezpublish.limitationType, alias: ConfigurationScope}
+
+    intprog.api.role.limitation_type.feature_group_scope:
+        class: IntProg\FeatureFlagBundle\Core\Limitation\FeatureGroupsLimitationType
+        arguments:
+            - '%intprog.feature.flag.feature_list%'
+        tags:
+            - {name: ezpublish.limitationType, alias: FeatureGroups}
 
     # controller definitions
     intprog.feature_flag_operation.controller:

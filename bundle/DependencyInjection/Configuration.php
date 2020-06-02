@@ -65,6 +65,10 @@ class Configuration implements ConfigurationInterface
 
         $children = $featuresNode->children();
 
+        $children->arrayNode('groups')
+            ->info('The groups of the feature used for policy limitations.')
+            ->defaultValue([])
+            ->prototype('scalar');
         $children->booleanNode('exposed')
             ->info('Sets the feature to be exposed to the frontend.')
             ->defaultFalse();

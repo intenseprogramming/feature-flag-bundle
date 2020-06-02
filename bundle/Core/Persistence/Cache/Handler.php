@@ -123,13 +123,13 @@ class Handler implements SpiHandler
     /**
      * Removes the persisted flag for the feature.
      *
-     * @param FeatureValue $feature
+     * @param FeatureFlag $feature
      *
      * @return void
      *
      * @throws InvalidArgumentException
      */
-    public function delete(FeatureValue $feature): void
+    public function delete(FeatureFlag $feature): void
     {
         $this->cache->deleteItems([
             $this->getCacheKey($feature->scope),

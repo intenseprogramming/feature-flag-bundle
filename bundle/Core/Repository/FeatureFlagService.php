@@ -207,13 +207,18 @@ class FeatureFlagService implements ApiFeatureFlagService
      */
     public function delete(FeatureFlag $feature): void
     {
-        if (!$this->permissionResolver->canUser('intprog_feature_flag', 'change', $feature)) {
+        $spiFeature = new SpiFeature([
+            'identifier' => $feature->identifier,
+            'scope'      => $feature->scope,
+        ]);
+
+        if (!$this->permissionResolver->canUser('intprog_feature_flag', 'change', $spiFeature)) {
             throw new UnauthorizedException(
-                'intprog_feature_flag', 'change', ['feature' => $feature->identifier, 'scope' => $feature->scope]
+                'intprog_feature_flag', 'change', ['feature' => $spiFeature->identifier, 'scope' => $spiFeature->scope]
             );
         }
 
-        $this->handler->delete($feature);
+        $this->handler->delete($spiFeature);
     }
 
     /**
@@ -240,6 +245,7 @@ class FeatureFlagService implements ApiFeatureFlagService
             'scope'       => $feature->scope,
             'name'        => $this->translate($featureDefinition['name']),
             'description' => $this->translate($featureDefinition['description']),
+            'groups'      => $featureDefinition['groups'],
             'default'     => $featureDefinition['default'],
             'enabled'     => $feature->enabled,
         ]);

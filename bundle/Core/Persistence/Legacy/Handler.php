@@ -96,11 +96,11 @@ class Handler implements SpiHandler
     /**
      * Removes the persisted flag for the feature.
      *
-     * @param FeatureValue $feature
+     * @param FeatureFlag $feature
      *
      * @return void
      */
-    public function delete(FeatureValue $feature): void
+    public function delete(FeatureFlag $feature): void
     {
         $this->gateway->delete($feature->identifier, $feature->scope);
     }

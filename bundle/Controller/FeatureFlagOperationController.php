@@ -112,6 +112,8 @@ class FeatureFlagOperationController extends AbstractController
             $updateStruct          = $this->featureFlagService->newFeatureFlagUpdateStruct($featureFlag);
             $updateStruct->enabled = $target['state'];
 
+            var_dump($featureFlag);
+
             $this->featureFlagService->update($updateStruct);
         } catch (NotFoundException $exception) {
             $createStruct             = $this->featureFlagService->newFeatureFlagCreateStruct();

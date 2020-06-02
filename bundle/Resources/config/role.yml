@@ -9,3 +9,13 @@ services:
         tags:
             - { name: ez.limitation.formMapper, limitationType: ConfigurationScope }
             - { name: ez.limitation.valueMapper, limitationType: ConfigurationScope }
+
+    intprog.limitation.form_mapper.feature_groups_scope:
+        parent: ezplatform.content_forms.limitation.form_mapper.multiple_selection
+        class: IntProg\FeatureFlagBundle\Limitation\FeatureGroupsLimitationMapper
+        lazy: true
+        arguments:
+            - "%intprog.feature.flag.feature_groups%"
+        tags:
+            - { name: ez.limitation.formMapper, limitationType: FeatureGroups }
+            - { name: ez.limitation.valueMapper, limitationType: FeatureGroups }

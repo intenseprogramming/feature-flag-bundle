@@ -48,11 +48,15 @@ class IntProgFeatureFlagExtension extends Extension implements PrependExtensionI
             $config['allow_cookie_manipulation'] ?? false
         );
 
+        $featureGroups = [];
         $features = $config['features'] ?? [];
         foreach ($features as $identifier => $feature) {
             $features[$identifier]['identifier'] = $identifier;
+
+            $featureGroups = array_unique(array_merge($featureGroups, $features[$identifier]['groups']));
         }
         $container->setParameter('intprog.feature.flag.feature_list', $features);
+        $container->setParameter('intprog.feature.flag.feature_groups', $featureGroups);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('controller.yml');

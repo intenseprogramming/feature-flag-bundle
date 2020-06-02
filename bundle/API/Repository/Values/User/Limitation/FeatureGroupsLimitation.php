@@ -3,27 +3,25 @@
  * @category   PHP
  * @package    intprog
  * @version    1
- * @date       2019-09-30 07:11 pm
+ * @date       2020-06-02 09:17 pm
  * @author     Konrad, Steve <skonrad@wingmail.net>
- * @copyright  Copyright © 2019, Intense Programming
+ * @copyright  Copyright © 2020, Intense Programming
  */
-
-declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation;
 
 use eZ\Publish\API\Repository\Values\User\Limitation;
 
 /**
- * Class ConfigurationScopeLimitation.
+ * Class FeatureGroupsLimitation.
  *
  * @package   IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation
  * @author    Konrad, Steve <skonrad@wingmail.net>
- * @copyright 2019 Intense Programming
+ * @copyright 2020 Intense Programming
  */
-class ConfigurationScopeLimitation extends Limitation
+class FeatureGroupsLimitation extends Limitation
 {
-    public const CONFIGURATION_SCOPE = 'ConfigurationScope';
+    public const FEATURE_GROUP = 'FeatureGroups';
 
     /**
      * Returns the limitation identifier (one of the defined constants) or a custom limitation.
@@ -32,6 +30,6 @@ class ConfigurationScopeLimitation extends Limitation
      */
     public function getIdentifier(): string
     {
-        return self::CONFIGURATION_SCOPE;
+        return self::FEATURE_GROUP;
     }
 }
