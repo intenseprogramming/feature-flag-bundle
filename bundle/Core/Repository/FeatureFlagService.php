@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace IntProg\FeatureFlagBundle\Core\Repository;
 
 use eZ\Publish\API\Repository\Exceptions\BadStateException;
+use eZ\Publish\API\Repository\Exceptions\InvalidArgumentException as ApiInvalidArgumentException;
 use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
@@ -127,22 +128,29 @@ class FeatureFlagService implements ApiFeatureFlagService
      *
      * @return FeatureFlag
      *
+     * @throws BadStateException
      * @throws InvalidArgumentException
      * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws ApiInvalidArgumentException
      */
     public function create(CreateStruct $createStruct): FeatureFlag
     {
-        $featureIdentifiers = array_map(
-            static function($feature) {
-                return $feature['identifier'];
-            },
-            $this->featureDefinitions
-        );
+        $spiFeature = new SpiFeature([
+            'identifier' => $createStruct->identifier,
+            'scope'      => $createStruct->scope,
+        ]);
 
-        if (!in_array($createStruct->identifier, $featureIdentifiers, true)) {
+        if (!$this->permissionResolver->canUser('intprog_feature_flag', 'change', $spiFeature)) {
+            throw new UnauthorizedException(
+                'intprog_feature_flag', 'change', ['feature' => $spiFeature->identifier, 'scope' => $spiFeature->scope]
+            );
+        }
+
+        if (!isset($this->featureDefinitions[$createStruct->identifier])) {
             throw new InvalidArgumentException(
                 '$createStruct->identifier',
-                sprintf('expected one of "%s"', implode('", "', $featureIdentifiers))
+                sprintf('expected one of "%s"', implode('", "', array_keys($this->featureDefinitions)))
             );
         }
 
@@ -177,7 +185,7 @@ class FeatureFlagService implements ApiFeatureFlagService
      * @throws BadStateException
      * @throws NotFoundException
      * @throws UnauthorizedException
-     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws ApiInvalidArgumentException
      */
     public function update(UpdateStruct $updateStruct): FeatureFlag
     {
@@ -203,7 +211,7 @@ class FeatureFlagService implements ApiFeatureFlagService
      *
      * @throws UnauthorizedException
      * @throws BadStateException
-     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws ApiInvalidArgumentException
      */
     public function delete(FeatureFlag $feature): void
     {

@@ -15,6 +15,7 @@ use eZ\Publish\Core\Base\Exceptions\UnauthorizedException;
 use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
 use IntProg\FeatureFlagBundle\API\FeatureFlagRepository;
 use IntProg\FeatureFlagBundle\API\Repository\FeatureFlagService;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,6 +70,8 @@ class FeatureFlagOperationController extends AbstractController
      * @param string $scope
      *
      * @return JsonResponse
+     *
+     * @throws UnauthorizedException
      */
     public function list(string $scope): JsonResponse
     {
@@ -103,6 +106,15 @@ class FeatureFlagOperationController extends AbstractController
         return new JsonResponse($featureList);
     }
 
+    /**
+     * Sets the state of the feature for the target scope.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     *
+     * @throws JsonException
+     */
     public function change(Request $request): Response
     {
         $target = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -112,21 +124,35 @@ class FeatureFlagOperationController extends AbstractController
             $updateStruct          = $this->featureFlagService->newFeatureFlagUpdateStruct($featureFlag);
             $updateStruct->enabled = $target['state'];
 
-            var_dump($featureFlag);
-
-            $this->featureFlagService->update($updateStruct);
+            $featureFlag = $this->featureFlagService->update($updateStruct);
         } catch (NotFoundException $exception) {
             $createStruct             = $this->featureFlagService->newFeatureFlagCreateStruct();
             $createStruct->scope      = $target['scope'];
             $createStruct->identifier = $target['identifier'];
             $createStruct->enabled    = $target['state'];
 
-            $this->featureFlagService->create($createStruct);
+            $featureFlag = $this->featureFlagService->create($createStruct);
         }
 
-        return new Response(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse([
+            'message' => sprintf(
+                'Successfully %s feature "%s".',
+                $featureFlag->enabled ? 'enabled' : 'disabled',
+                $featureFlag->name
+            ),
+        ]);
     }
 
+    /**
+     * Resets the feature state by removing it from the database.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     *
+     * @throws JsonException
+     * @throws NotFoundException
+     */
     public function reset(Request $request): Response
     {
         $target = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -134,6 +160,8 @@ class FeatureFlagOperationController extends AbstractController
         $featureFlag = $this->featureFlagService->load($target['identifier'], $target['scope']);
         $this->featureFlagService->delete($featureFlag);
 
-        return new Response(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse([
+            'message' => sprintf('Successfully reset feature "%s".', $featureFlag->name),
+        ]);
     }
 }

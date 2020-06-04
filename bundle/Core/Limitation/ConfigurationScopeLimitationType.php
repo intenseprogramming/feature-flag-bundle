@@ -22,7 +22,7 @@ use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\SPI\Limitation\Type as SPILimitationTypeInterface;
 use IntProg\FeatureFlagBundle\API\Repository\Values\User\Limitation\ConfigurationScopeLimitation;
 use IntProg\FeatureFlagBundle\Core\MVC\Symfony\ConfigurationScope;
-use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
+use IntProg\FeatureFlagBundle\Spi\Persistence\FeatureFlag;
 
 /**
  * Class ConfigurationScopeLimitationType.
@@ -111,13 +111,19 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
     ): bool
     {
         if (!$value instanceof ConfigurationScopeLimitation) {
-            throw new InvalidArgumentException('$value', 'Must be of type: ConfigurationScopeLimitation');
+            throw new InvalidArgumentException(
+                '$value',
+                sprintf('Must be of type: %s, got "%s"', ConfigurationScopeLimitation::class, get_class($value))
+            );
         }
 
         if ($object instanceof FeatureFlag) {
             $object = new ConfigurationScope($object->scope);
         } elseif (!$object instanceof ConfigurationScope) {
-            throw new InvalidArgumentException('$object', 'Must be of type: ConfigurationScope');
+            throw new InvalidArgumentException(
+                '$object',
+                sprintf('Must be of type: %s, got "%s"', ConfigurationScope::class, get_class($object))
+            );
         }
 
         return (

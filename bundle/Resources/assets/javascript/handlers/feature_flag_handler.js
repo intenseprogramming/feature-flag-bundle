@@ -50,10 +50,12 @@ class FeatureFlagHandler {
         );
 
         fetch(request)
-            .then(() => {
-                callback();
+            .then(eZ.helpers.request.getJsonFromResponse)
+            .then(data => {
+                eZ.helpers.notification.showSuccessNotification(data.message);
             })
-            .catch(eZ.helpers.notification.showErrorNotification);
+            .catch(eZ.helpers.notification.showErrorNotification)
+            .finally(callback);
     }
 
     resetFeatureFlag(identifier, scope, callback) {
@@ -76,10 +78,12 @@ class FeatureFlagHandler {
         );
 
         fetch(request)
-            .then(() => {
-                callback();
+            .then(eZ.helpers.request.getJsonFromResponse)
+            .then(data => {
+                eZ.helpers.notification.showSuccessNotification(data.message);
             })
-            .catch(eZ.helpers.notification.showErrorNotification);
+            .catch(eZ.helpers.notification.showErrorNotification)
+            .finally(callback);
     }
 }
 
