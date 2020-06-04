@@ -138,9 +138,9 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
      * @param APILimitationValue $value
      * @param APIUserReference   $currentUser
      *
-     * @throws NotImplementedException If the limitation does not support
-     *         being used as a Criterion.
+     * @throws NotImplementedException
      *
+     * @codeCoverageIgnore
      */
     public function getCriterion(APILimitationValue $value, APIUserReference $currentUser)
     {
@@ -151,6 +151,8 @@ class ConfigurationScopeLimitationType implements SPILimitationTypeInterface
      * Returns info on valid $limitationValues.
      *
      * @throws NotImplementedException
+     *
+     * @codeCoverageIgnore
      */
     public function valueSchema()
     {
