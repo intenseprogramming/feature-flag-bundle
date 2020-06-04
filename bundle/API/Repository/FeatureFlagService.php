@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace IntProg\FeatureFlagBundle\API\Repository;
 
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use IntProg\FeatureFlagBundle\Core\Repository\Values\FeatureFlag;
 use IntProg\FeatureFlagBundle\Spi\Persistence\CreateStruct;
 use IntProg\FeatureFlagBundle\Spi\Persistence\UpdateStruct;
@@ -32,6 +33,8 @@ interface FeatureFlagService
      * @param string $scope
      *
      * @return FeatureFlag
+     *
+     * @throws NotFoundException
      */
     public function load(string $identifier, string $scope): FeatureFlag;
 
