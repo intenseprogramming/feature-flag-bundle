@@ -1,0 +1,44 @@
+{
+    "identifier_1": {
+        "identifier": "identifier_1",
+        "name": {
+            "id": "test",
+            "context": "context"
+        },
+        "description": {
+            "id": "test",
+            "context": null
+        },
+        "groups": [],
+        "default": true,
+        "exposed": false
+    },
+    "identifier_2": {
+        "identifier": "identifier_2",
+        "name": {
+            "id": "test",
+            "context": "context"
+        },
+        "description": {
+            "id": "test",
+            "context": null
+        },
+        "groups": [],
+        "default": true,
+        "exposed": true
+    },
+    "identifier_3": {
+        "identifier": "identifier_3",
+        "name": {
+            "id": "test",
+            "context": "context"
+        },
+        "description": {
+            "id": "test",
+            "context": null
+        },
+        "groups": [],
+        "default": false,
+        "exposed": false
+    }
+}
